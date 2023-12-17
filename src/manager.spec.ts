@@ -1,7 +1,7 @@
 import path from 'path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LoggerAdapter, LoggerProvider } from '.'
-import { LoggerManager } from './manager'
+import { Manager } from './manager'
 
 const adapter: LoggerAdapter = {
   type: 'test'
@@ -31,7 +31,7 @@ describe('logone/manager', () => {
       const now = new Date(2023, 1, 1, 12)
       vi.setSystemTime(now)
 
-      const manager = new LoggerManager(adapter, provider)
+      const manager = new Manager(adapter, provider)
       const [logger, finish] = manager.recording()
       const spy = vi.spyOn(provider, 'output')
 

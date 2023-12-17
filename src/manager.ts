@@ -5,7 +5,7 @@ import { Timer } from './timer'
 
 type LoggerFinishFunction = () => void
 
-export class LoggerManager {
+export class Manager {
   constructor(
     private adapter: Adapter,
     private provider: Provider
