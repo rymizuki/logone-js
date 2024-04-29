@@ -2,18 +2,18 @@
   "name": "@logone/core",
   "private": false,
   "version": "0.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "scripts": {
-    "build": "tsc --project ./tsconfig.build.json",
+    "build": "tsup --dts --outDir build --splitting false --sourcemap --clean ./src/index.ts",
     "test": "vitest run",
     "lint": "eslint --max-warnings 0 --ext .ts,.tsx .",
-    "format": "prettier -w './src/**/*.{ts,tsx,js,json,css}' --check"
+    "format": "prettier -w './**/*.{ts,tsx,js,json,css}' --check"
   },
-  "dependencies": {},
   "devDependencies": {
     "@logone/dev-config": "*",
     "@types/node": "^20.10.4",
+    "tsup": "^8.0.2",
     "vitest": "^1.0.4"
   }
 }

@@ -1,127 +1,49 @@
-import { Adapter } from './adapter'
-import { Provider } from './provider'
+import { LogRecord, LoggerSeverity } from './interface'
+import { Stacker } from './stacker'
 import { Timer } from './timer'
-import {
-  LoggerSeverity,
-  LoggerContext,
-  LoggerConfig,
-  LoggerRecord
-} from './models'
-import util from 'util'
 
-export interface LoggerInterface {
-  start(): void
-  finish(): void
-  debug(format: string, ...args: unknown[]): void
-  info(format: string, ...args: unknown[]): void
-  warning(format: string, ...args: unknown[]): void
-  error(format: string, ...args: unknown[]): void
-  critical(format: string, ...args: unknown[]): void
-  record(severity: LoggerSeverity, format: string, ...args: unknown[]): void
-}
-
-const SEVERITY_LEVEL = {
-  CRITICAL: 5,
-  ERROR: 4,
-  WARNING: 3,
-  INFO: 2,
-  DEBUG: 1
-}
-
-export class Logger implements LoggerInterface {
-  private context: LoggerContext = {}
-  private entries: LoggerRecord['runtime']['lines'] = []
-
+export class Logger {
   constructor(
     private timer: Timer,
-    private adapter: Adapter,
-    private provider: Provider,
-    private config: LoggerConfig = {}
+    private stacker: Stacker
   ) {}
 
-  start() {
-    this.timer.start()
+  debug(message: string, ...args: unknown[]) {
+    this.addEntry('DEBUG', message, ...args)
   }
-
-  finish() {
-    this.timer.finish()
-    if (!this.entries.length) {
-      return
-    }
-
-    const severity = this.getHighestSeverity()
-    const payload = {
-      type: this.adapter.type,
-      context: this.context,
-      runtime: {
-        severity,
-        startTime: this.timer.startTime,
-        endTime: this.timer.endTime,
-        elapsed: this.timer.elapsed,
-        lines: this.entries
-      },
-      config: this.config
-    }
-    this.provider.output(payload)
+  info(message: string, ...args: unknown[]) {
+    this.addEntry('INFO', message, ...args)
   }
-
-  setLogContext(context: LoggerContext): void {
-    this.context = context
+  warning(message: string, ...args: unknown[]) {
+    this.addEntry('WARNING', message, ...args)
   }
-
-  debug(format: string, ...args: unknown[]): void {
-    this.addEntry('DEBUG', format, ...args)
+  error(message: string, ...args: unknown[]) {
+    this.addEntry('ERROR', message, ...args)
   }
-
-  info(format: string, ...args: unknown[]): void {
-    this.addEntry('INFO', format, ...args)
+  critical(message: string, ...args: unknown[]) {
+    this.addEntry('CRITICAL', message, ...args)
   }
-
-  warning(format: string, ...args: unknown[]): void {
-    this.addEntry('WARNING', format, ...args)
-  }
-
-  error(format: string, ...args: unknown[]): void {
-    console.log()
-    this.addEntry('ERROR', format, ...args)
-  }
-
-  critical(format: string, ...args: unknown[]): void {
-    this.addEntry('CRITICAL', format, ...args)
-  }
-
-  record(severity: LoggerSeverity, message: string): void {
+  record(severity: LoggerSeverity, message: string) {
     this.addEntry(severity, message)
   }
 
   private addEntry(
     severity: LoggerSeverity,
-    format: string,
+    message: string,
     ...args: unknown[]
   ) {
     const [fileName, fileLine] = this.getCallerPosition()
 
-    const entry: LoggerRecord['runtime']['lines'][0] = {
+    const entry: LogRecord = {
       severity,
       time: this.timer.currentTime,
-      message: util.format(format, ...args),
+      message,
+      payload: args.length === 1 ? args[0] : args,
       fileLine,
       fileName
     }
-    this.entries.push(entry)
-  }
 
-  private getHighestSeverity(): LoggerSeverity {
-    const level = this.entries
-      .map(({ severity }) => SEVERITY_LEVEL[severity])
-      .reduce((prev, level) => (prev < level ? level : prev), 0)
-    const severity = (
-      Object.keys(SEVERITY_LEVEL) as (keyof typeof SEVERITY_LEVEL)[]
-    ).find((severity) => SEVERITY_LEVEL[severity] === level)
-    if (!severity) {
-      throw new Error('Logger has no entry by based on severity')
-    }
-    return severity
+    this.stacker.stack(entry)
   }
 
   private getCallerPosition(): [string | null, number | null, number | null] {
@@ -132,6 +54,10 @@ export class Logger implements LoggerInterface {
       return [null, null, null]
     }
     const [file, lines, chars] = current.replace(/\s*at\s+/, '').split(/:/)
-    return [file, lines ? Number(lines) : null, chars ? Number(chars) : null]
+    return [
+      file ?? null,
+      lines ? Number(lines) : null,
+      chars ? Number(chars) : null
+    ]
   }
 }

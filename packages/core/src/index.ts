@@ -1,14 +1,9 @@
-import { LoggerInterface } from './logger'
-import { Adapter } from './adapter'
-import { Provider } from './provider'
-import { LoggerRecord, LoggerSeverity } from './models'
-import { Manager } from './manager'
+import { LoggerAdapter } from './interface'
+import { Logone } from './logone'
 
-export {
-  Adapter as LoggerAdapter,
-  LoggerSeverity,
-  LoggerInterface,
-  Provider as LoggerProvider,
-  LoggerRecord,
-  Manager as LoggerManager
+export { type LoggerInterface, type LoggerRecord } from './interface'
+export { type LoggerAdapter }
+
+export function createLogone(adapter: LoggerAdapter) {
+  return new Logone(adapter)
 }

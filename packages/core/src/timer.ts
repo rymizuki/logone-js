@@ -1,21 +1,21 @@
-export class Timer {
-  public startAt: number | null = null
-  public endAt: number | null = null
+import { LoggerConfigTimer } from './interface'
 
-  constructor(
-    private config: { elapsedUnit: '1ms' } = { elapsedUnit: '1ms' }
-  ) {}
+export class Timer {
+  private startAt: number | null = null
+  private endAt: number | null = null
+
+  constructor(private config: LoggerConfigTimer) {}
 
   get startTime() {
     if (!this.startAt) {
-      throw new Error('LoggerTime is not started')
+      throw new Error('Logger Timer is not started')
     }
     return new Date(this.startAt)
   }
 
   get endTime() {
     if (!this.endAt) {
-      throw new Error('LoggerTime is not finished')
+      throw new Error('Logger Timer is not ended')
     }
     return new Date(this.endAt)
   }
@@ -26,7 +26,7 @@ export class Timer {
 
   get elapsed() {
     if (!this.startAt) {
-      throw new Error('LoggerTimer is not started')
+      throw new Error('Logger Timer is not started')
     }
     const current = this.endAt ? this.endAt : this.currentTime.getTime()
     const diff = current - this.startAt
@@ -34,10 +34,10 @@ export class Timer {
   }
 
   start() {
-    this.startAt = new Date().getTime()
+    this.startAt = this.currentTime.getTime()
   }
 
-  finish() {
-    this.endAt = new Date().getTime()
+  end() {
+    this.endAt = this.currentTime.getTime()
   }
 }
