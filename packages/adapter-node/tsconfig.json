@@ -1,0 +1,4 @@
+{
+  "include": ["./src"],
+  "extends": ["@logone/dev-config/tsconfig/base.json"]
+}
