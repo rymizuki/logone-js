@@ -39,5 +39,8 @@
   "bugs": {
     "url": "https://github.com/rymizuki/logone-js/issues"
   },
-  "homepage": "https://github.com/rymizuki/logone-js#readme"
+  "homepage": "https://github.com/rymizuki/logone-js#readme",
+  "publishConfig": {
+    "access": "public"
+  }
 }
