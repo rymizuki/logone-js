@@ -16,5 +16,10 @@
     "@types/node": "^20.10.4",
     "tsup": "^8.0.2",
     "vitest": "^1.0.4"
-  }
+  },
+  "files": [
+    "build/index.js",
+    "build/index.js.map",
+    "build/index.d.ts"
+  ]
 }

@@ -21,5 +21,19 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "mizuki_r",
+    "email": "ry.mizuki@gmail.com"
+  },
+  "description": "This library is logger that supports structured logging by generating a single line of JSON format for your specified lifecycle. Inspired by logone-go.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rymizuki/logone-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rymizuki/logone-js/issues"
+  },
+  "homepage": "https://github.com/rymizuki/logone-js#readme"
 }
