@@ -1,0 +1,19 @@
+{
+  "name": "@logone/dev-config",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "format": "prettier -w './**/*.{ts,tsx,js,json,css}' --check"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
+    "eslint": "^9.1.1",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  },
+  "files": [
+    "prettier/index.js",
+    "eslint/index.js",
+    "tsconfig/base.json"
+  ]
+}

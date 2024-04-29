@@ -1,21 +1,4 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "commonjs",
-    "moduleResolution": "Node",
-    "lib": ["ESNext"],
-    "esModuleInterop": true,
-    "allowJs": true,
-    "sourceMap": true,
-    "strict": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "paths": {},
-    "typeRoots": ["./node_modules/@types", "./@types"],
-    "types": ["node"]
-  },
-  "exclude": ["node_modules"],
-  "include": []
+  "include": [],
+  "extends": ["@logone/dev-config/tsconfig/base"]
 }
