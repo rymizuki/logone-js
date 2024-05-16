@@ -1,3 +1,4 @@
+import { excludeRecursiveReference } from './helpers/exclude-recursive-reference'
 import {
   LogRecord,
   LoggerAdapter,
@@ -40,7 +41,7 @@ export class Logone {
 
       const severity = this.getHighestSeverity(stacker.entries)
       const lines = maskPayloadSecretParameters(
-        stacker.entries,
+        excludeRecursiveReference(stacker.entries),
         this.config.maskKeywords
       )
       const record = {
