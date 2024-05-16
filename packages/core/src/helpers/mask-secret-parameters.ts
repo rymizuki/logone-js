@@ -1,4 +1,4 @@
-import { LogRecord, LoggerConfig } from './interface'
+import { LogRecord, LoggerConfig } from '../interface'
 
 type KeywordType = NonNullable<LoggerConfig['maskKeywords']>[number]
 

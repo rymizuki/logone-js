@@ -1,4 +1,5 @@
 import { excludeRecursiveReference } from './helpers/exclude-recursive-reference'
+import { maskPayloadSecretParameters } from './helpers/mask-secret-parameters'
 import {
   LogRecord,
   LoggerAdapter,
@@ -7,7 +8,6 @@ import {
   LoggerSeverity
 } from './interface'
 import { Logger } from './logger'
-import { maskPayloadSecretParameters } from './mask-secret-parameters'
 import { severities } from './severity'
 import { Stacker } from './stacker'
 import { Timer } from './timer'

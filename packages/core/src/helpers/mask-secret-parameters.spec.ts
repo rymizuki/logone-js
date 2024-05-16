@@ -1,6 +1,6 @@
 import set from 'just-safe-set'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { LogRecord } from './interface'
+import { LogRecord } from '../interface'
 import { maskPayloadSecretParameters } from './mask-secret-parameters'
 
 function clone<
