@@ -19,9 +19,6 @@ const timer = fakeTimer()
 
 describe('Logone', () => {
   beforeEach(() => {
-    const adapter = new FakeAdapter()
-    v.set('adapter', adapter)
-    v.set('logone', new Logone(adapter))
     timer.setup()
   })
   afterEach(() => {
@@ -31,6 +28,10 @@ describe('Logone', () => {
 
   describe('basic usage', () => {
     beforeEach(() => {
+      const adapter = new FakeAdapter()
+      v.set('adapter', adapter)
+      v.set('logone', new Logone(adapter))
+
       const { logger, finish } = v.get('logone')!.start('test', {
         case: 'basic usage'
       })
@@ -51,7 +52,8 @@ describe('Logone', () => {
       expect(v.get('adapter')?.outputs[0]).toStrictEqual({
         type: 'test',
         config: {
-          elapsedUnit: '1ms'
+          elapsedUnit: '1ms',
+          maskKeywords: []
         },
         context: {
           case: 'basic usage'
@@ -61,7 +63,7 @@ describe('Logone', () => {
           endTime: timer.current,
           lines: [
             {
-              fileLine: 39,
+              fileLine: 40,
               fileName: __filename,
               message: 'example 1',
               payload: [],
@@ -69,7 +71,7 @@ describe('Logone', () => {
               time: timer.fromStartingTimeAt(1000)
             },
             {
-              fileLine: 42,
+              fileLine: 43,
               fileName: __filename,
               message: 'example 2',
               payload: [],
@@ -77,7 +79,83 @@ describe('Logone', () => {
               time: timer.fromStartingTimeAt(2000)
             },
             {
-              fileLine: 45,
+              fileLine: 46,
+              fileName: __filename,
+              message: 'example 3',
+              payload: [],
+              severity: 'ERROR',
+              time: timer.fromStartingTimeAt(3000)
+            }
+          ],
+          severity: 'ERROR',
+          startTime: timer.fromStartingTimeAt(0)
+        }
+      })
+    })
+  })
+
+  describe('use maskKeywords option', () => {
+    beforeEach(() => {
+      const adapter = new FakeAdapter()
+      v.set('adapter', adapter)
+      v.set(
+        'logone',
+        new Logone(adapter, {
+          maskKeywords: ['password']
+        })
+      )
+
+      const { logger, finish } = v.get('logone')!.start('test', {
+        case: 'basic usage'
+      })
+
+      timer.after(1000)
+      logger.info('example 1', {
+        username: 'example',
+        password: 'example'
+      })
+
+      timer.after(1000)
+      logger.debug('example 2')
+
+      timer.after(1000)
+      logger.error('example 3')
+
+      timer.after(1000)
+      finish()
+    })
+    it('should be output records', () => {
+      expect(v.get('adapter')?.outputs[0]).toStrictEqual({
+        type: 'test',
+        config: {
+          elapsedUnit: '1ms',
+          maskKeywords: ['password']
+        },
+        context: {
+          case: 'basic usage'
+        },
+        runtime: {
+          elapsed: 4000,
+          endTime: timer.current,
+          lines: [
+            {
+              fileLine: 113,
+              fileName: __filename,
+              message: 'example 1',
+              payload: { username: 'example', password: '*******' },
+              severity: 'INFO',
+              time: timer.fromStartingTimeAt(1000)
+            },
+            {
+              fileLine: 119,
+              fileName: __filename,
+              message: 'example 2',
+              payload: [],
+              severity: 'DEBUG',
+              time: timer.fromStartingTimeAt(2000)
+            },
+            {
+              fileLine: 122,
               fileName: __filename,
               message: 'example 3',
               payload: [],

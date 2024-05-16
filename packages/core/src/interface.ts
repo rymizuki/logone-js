@@ -15,7 +15,11 @@ export interface LoggerConfigTimer {
   elapsedUnit: '1ms'
 }
 
-export type LoggerConfig = LoggerConfigTimer
+export interface LoggerConfigLogone {
+  maskKeywords: (string | RegExp)[]
+}
+
+export type LoggerConfig = LoggerConfigTimer & LoggerConfigLogone
 
 export type LoggerRecord = {
   type: string

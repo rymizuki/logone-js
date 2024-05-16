@@ -6,15 +6,24 @@ import {
   LoggerSeverity
 } from './interface'
 import { Logger } from './logger'
+import { maskPayloadSecretParameters } from './mask-secret-parameters'
 import { severities } from './severity'
 import { Stacker } from './stacker'
 import { Timer } from './timer'
 
 export class Logone {
+  private config: LoggerConfig
+
   constructor(
     private adapter: LoggerAdapter,
-    private config: LoggerConfig = { elapsedUnit: '1ms' }
-  ) {}
+    config: Partial<LoggerConfig> = {}
+  ) {
+    this.config = {
+      elapsedUnit: '1ms',
+      maskKeywords: [],
+      ...config
+    }
+  }
 
   start(type: string, context: LoggerContext = {}) {
     const timer = new Timer({
@@ -31,18 +40,23 @@ export class Logone {
 
       const severity = this.getHighestSeverity(stacker.entries)
 
-      this.adapter.output({
-        type,
-        context,
-        runtime: {
-          severity,
-          startTime: timer.startTime,
-          endTime: timer.endTime,
-          elapsed: timer.elapsed,
-          lines: stacker.entries
-        },
-        config: this.config
-      })
+      this.adapter.output(
+        maskPayloadSecretParameters(
+          {
+            type,
+            context,
+            runtime: {
+              severity,
+              startTime: timer.startTime,
+              endTime: timer.endTime,
+              elapsed: timer.elapsed,
+              lines: stacker.entries
+            },
+            config: this.config
+          },
+          this.config.maskKeywords
+        )
+      )
     }
 
     return {
