@@ -1,3 +1,5 @@
+import { excludeRecursiveReference } from './helpers/exclude-recursive-reference'
+import { maskPayloadSecretParameters } from './helpers/mask-secret-parameters'
 import {
   LogRecord,
   LoggerAdapter,
@@ -6,7 +8,6 @@ import {
   LoggerSeverity
 } from './interface'
 import { Logger } from './logger'
-import { maskPayloadSecretParameters } from './mask-secret-parameters'
 import { severities } from './severity'
 import { Stacker } from './stacker'
 import { Timer } from './timer'
@@ -39,24 +40,24 @@ export class Logone {
       if (!stacker.hasEntries()) return
 
       const severity = this.getHighestSeverity(stacker.entries)
-
-      this.adapter.output(
-        maskPayloadSecretParameters(
-          {
-            type,
-            context,
-            runtime: {
-              severity,
-              startTime: timer.startTime,
-              endTime: timer.endTime,
-              elapsed: timer.elapsed,
-              lines: stacker.entries
-            },
-            config: this.config
-          },
-          this.config.maskKeywords
-        )
+      const lines = maskPayloadSecretParameters(
+        excludeRecursiveReference(stacker.entries),
+        this.config.maskKeywords
       )
+      const record = {
+        type,
+        context,
+        runtime: {
+          severity,
+          startTime: timer.startTime,
+          endTime: timer.endTime,
+          elapsed: timer.elapsed,
+          lines
+        },
+        config: this.config
+      }
+
+      this.adapter.output(record)
     }
 
     return {
