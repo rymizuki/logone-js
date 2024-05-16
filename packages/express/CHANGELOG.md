@@ -1,5 +1,11 @@
 # @logone/express
 
+## 0.0.2
+
+### Patch Changes
+
+- support logone config
+
 ## 0.0.1
 
 ### Patch Changes
