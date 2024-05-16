@@ -39,24 +39,24 @@ export class Logone {
       if (!stacker.hasEntries()) return
 
       const severity = this.getHighestSeverity(stacker.entries)
-
-      this.adapter.output(
-        maskPayloadSecretParameters(
-          {
-            type,
-            context,
-            runtime: {
-              severity,
-              startTime: timer.startTime,
-              endTime: timer.endTime,
-              elapsed: timer.elapsed,
-              lines: stacker.entries
-            },
-            config: this.config
-          },
-          this.config.maskKeywords
-        )
+      const lines = maskPayloadSecretParameters(
+        stacker.entries,
+        this.config.maskKeywords
       )
+      const record = {
+        type,
+        context,
+        runtime: {
+          severity,
+          startTime: timer.startTime,
+          endTime: timer.endTime,
+          elapsed: timer.elapsed,
+          lines
+        },
+        config: this.config
+      }
+
+      this.adapter.output(record)
     }
 
     return {

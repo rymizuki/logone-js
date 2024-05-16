@@ -1,19 +1,18 @@
-import { LoggerConfig, LoggerRecord } from './interface'
+import { LogRecord, LoggerConfig } from './interface'
 
 type KeywordType = NonNullable<LoggerConfig['maskKeywords']>[number]
 
 export function maskPayloadSecretParameters(
-  record: LoggerRecord,
+  entries: LogRecord[],
   keywords: LoggerConfig['maskKeywords']
 ) {
   if (!keywords || !keywords.length) {
-    return record
+    return entries
   }
-  record.runtime.lines = record.runtime.lines.map((entry) => ({
+  return entries.map((entry) => ({
     ...entry,
     payload: maskRecursive(entry.payload, keywords)
   }))
-  return record
 }
 
 function maskRecursive(payload: unknown, keywords: KeywordType[]): unknown {
