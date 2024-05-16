@@ -21,6 +21,8 @@ export interface LoggerConfigLogone {
 
 export type LoggerConfig = LoggerConfigTimer & LoggerConfigLogone
 
+export type LogoneConfig = Partial<LoggerConfig>
+
 export type LoggerRecord = {
   type: string
   context: LoggerContext
