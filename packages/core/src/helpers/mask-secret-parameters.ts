@@ -17,6 +17,8 @@ export function maskPayloadSecretParameters(
 
 function maskRecursive(payload: unknown, keywords: KeywordType[]): unknown {
   if (!payload) return payload
+  if (typeof payload === 'string')
+    return replaceAsterByMatchCapture(payload, keywords)
   if (typeof payload !== 'object') return payload
   if (Array.isArray(payload)) {
     return payload.map((record) => maskRecursive(record, keywords))
@@ -30,8 +32,8 @@ function maskRecursive(payload: unknown, keywords: KeywordType[]): unknown {
         typeof value === 'object'
           ? maskRecursive(value, keywords)
           : isMatchKeyword(prop, keywords)
-            ? execMask(value)
-            : value
+            ? `${value}`.replace(/./g, '*')
+            : replaceAsterByMatchCapture(value, keywords)
       return prev
     },
     {} as Record<string, unknown>
@@ -50,9 +52,24 @@ function isMatchKeyword(prop: string, keywords: KeywordType[]) {
   return false
 }
 
-function execMask(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any
-) {
-  return `${value}`.replace(/./g, '*')
+function replaceAsterByMatchCapture(value: unknown, keywords: KeywordType[]) {
+  if (typeof value !== 'string') return value
+  for (const keyword of keywords) {
+    if (!(keyword instanceof RegExp)) {
+      continue
+    }
+
+    const found = value.match(keyword)
+    if (!found) {
+      continue
+    }
+
+    const [, capture] = found
+    if (!capture) {
+      continue
+    }
+
+    return value.replace(capture, capture.replace(/./g, '*'))
+  }
+  return value
 }
