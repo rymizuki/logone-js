@@ -1,7 +1,7 @@
 {
   "name": "@logone/core",
   "private": false,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {

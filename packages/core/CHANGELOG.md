@@ -1,5 +1,11 @@
 # @logone/core
 
+## 0.0.4
+
+### Patch Changes
+
+- small fix and update
+
 ## 0.0.3
 
 ### Patch Changes
