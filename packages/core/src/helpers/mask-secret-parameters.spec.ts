@@ -32,7 +32,8 @@ const entries: LogRecord[] = [
           passwordConfirm: '1234abcABC!#@',
           newPassword: '1234abcABC!#@'
         }
-      ]
+      ],
+      data: '{"password": "1234abcABC!#@", "username": "example@example.com"}'
     },
     time: new Date(),
     fileLine: null,
@@ -98,6 +99,19 @@ describe('maskSecretParameters', () => {
 
       expect(
         maskPayloadSecretParameters(clone(entries), [/password/, /Password/])
+      ).toStrictEqual(expected)
+    })
+  })
+  describe('keyword is [/"password": "(.+)"/]', () => {
+    it('should be replace * in text', () => {
+      const expected = clone(entries)
+      set(
+        expected,
+        '0.payload.data',
+        '{"password": "*************", "username": "example@example.com"}'
+      )
+      expect(
+        maskPayloadSecretParameters(clone(entries), [/"password": "(.+?)"/])
       ).toStrictEqual(expected)
     })
   })
