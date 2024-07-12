@@ -1,4 +1,5 @@
 import { excludeRecursiveReference } from './helpers/exclude-recursive-reference'
+import { filterSeverityByLevel } from './helpers/log-level'
 import { maskPayloadSecretParameters } from './helpers/mask-secret-parameters'
 import {
   LogRecord,
@@ -22,6 +23,7 @@ export class Logone {
     this.config = {
       elapsedUnit: '1ms',
       maskKeywords: [],
+      logLevel: 'DEBUG',
       ...config
     }
   }
@@ -37,13 +39,18 @@ export class Logone {
 
     const finish = () => {
       timer.end()
+
       if (!stacker.hasEntries()) return
 
-      const severity = this.getHighestSeverity(stacker.entries)
       const lines = maskPayloadSecretParameters(
-        excludeRecursiveReference(stacker.entries),
+        excludeRecursiveReference(
+          filterSeverityByLevel(this.config.logLevel, stacker.entries)
+        ),
         this.config.maskKeywords
       )
+      if (!lines.length) return
+
+      const severity = this.getHighestSeverity(lines)
       const record = {
         type,
         context,

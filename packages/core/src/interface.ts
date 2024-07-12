@@ -17,6 +17,7 @@ export interface LoggerConfigTimer {
 
 export interface LoggerConfigLogone {
   maskKeywords: (string | RegExp)[]
+  logLevel: LoggerSeverity
 }
 
 export type LoggerConfig = LoggerConfigTimer & LoggerConfigLogone
