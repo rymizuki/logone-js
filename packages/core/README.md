@@ -67,6 +67,25 @@ app.get('/example', (req, res) => {
 })
 ```
 
+### Filter by log level
+
+can narrow down to only those severities with a specified log level or higher.
+
+```ts
+const logone = createLogone(createAdapter(), {
+  logLevel: 'INFO'
+})
+const main = () => {
+  const { logger, finish } = logone.start('example')
+
+  logger.debug('no output')
+  logger.info('output')
+  logger.error('output')
+
+  finish()
+}
+```
+
 ## Severity
 
 - debug

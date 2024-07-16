@@ -53,6 +53,7 @@ describe('Logone', () => {
         type: 'test',
         config: {
           elapsedUnit: '1ms',
+          logLevel: 'DEBUG',
           maskKeywords: []
         },
         context: {
@@ -129,6 +130,7 @@ describe('Logone', () => {
         type: 'test',
         config: {
           elapsedUnit: '1ms',
+          logLevel: 'DEBUG',
           maskKeywords: ['password']
         },
         context: {
@@ -139,7 +141,7 @@ describe('Logone', () => {
           endTime: timer.current,
           lines: [
             {
-              fileLine: 113,
+              fileLine: 114,
               fileName: __filename,
               message: 'example 1',
               payload: { username: 'example', password: '*******' },
@@ -147,7 +149,7 @@ describe('Logone', () => {
               time: timer.fromStartingTimeAt(1000)
             },
             {
-              fileLine: 119,
+              fileLine: 120,
               fileName: __filename,
               message: 'example 2',
               payload: [],
@@ -155,7 +157,7 @@ describe('Logone', () => {
               time: timer.fromStartingTimeAt(2000)
             },
             {
-              fileLine: 122,
+              fileLine: 123,
               fileName: __filename,
               message: 'example 3',
               payload: [],
@@ -167,6 +169,38 @@ describe('Logone', () => {
           startTime: timer.fromStartingTimeAt(0)
         }
       })
+    })
+  })
+
+  describe('use logLevel option', () => {
+    beforeEach(() => {
+      const adapter = new FakeAdapter()
+      v.set('adapter', adapter)
+      v.set(
+        'logone',
+        new Logone(adapter, {
+          logLevel: 'INFO'
+        })
+      )
+
+      const { logger, finish } = v.get('logone')!.start('test', {
+        case: 'use logLevel option'
+      })
+
+      timer.after(1000)
+      logger.info('example 1', {})
+
+      timer.after(1000)
+      logger.debug('example 2', {})
+
+      timer.after(1000)
+      logger.critical('example 3', {})
+
+      finish()
+    })
+    it('should be output over INFO entries', () => {
+      console.log(v.get('adapter')?.outputs)
+      expect(v.get('adapter')?.outputs[0]?.runtime.lines).length(2)
     })
   })
 })
