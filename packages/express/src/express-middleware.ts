@@ -1,6 +1,11 @@
 import { RequestHandler } from 'express'
 
-import { LoggerInterface, createLogone, LogoneConfig } from '@logone/core'
+import {
+  LoggerInterface,
+  createLogone,
+  LogoneConfig,
+  LoggerAdapter
+} from '@logone/core'
 import { createAdapter } from '@logone/adapter-node'
 
 declare module 'express-serve-static-core' {
@@ -9,9 +14,9 @@ declare module 'express-serve-static-core' {
   }
 }
 
-const createHandler = (config: LogoneConfig = {}) => {
+const createHandler = (config: LogoneConfig = {}, adapter?: LoggerAdapter) => {
   const middleware: RequestHandler = (req, res, next) => {
-    const logone = createLogone(createAdapter(), config)
+    const logone = createLogone(adapter ?? createAdapter(), config)
     const { logger, finish } = logone.start('request', {
       method: req.method,
       url: req.url,
