@@ -1,5 +1,11 @@
 # @logone/express
 
+## 0.0.4
+
+### Patch Changes
+
+- fix version specific
+
 ## 0.0.3
 
 ### Patch Changes
