@@ -22,7 +22,7 @@
     "vitest": "^1.0.4"
   },
   "peerDependencies": {
-    "@logone/core": "^0.0.2"
+    "@logone/core": ">=0.0.2"
   },
   "files": [
     "build/index.js",
