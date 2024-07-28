@@ -1,3 +1,4 @@
+import { excludeRecursiveBigInt } from './helpers/exclude-recursive-bigint'
 import { excludeRecursiveReference } from './helpers/exclude-recursive-reference'
 import { filterSeverityByLevel } from './helpers/log-level'
 import { maskPayloadSecretParameters } from './helpers/mask-secret-parameters'
@@ -43,8 +44,10 @@ export class Logone {
       if (!stacker.hasEntries()) return
 
       const lines = maskPayloadSecretParameters(
-        excludeRecursiveReference(
-          filterSeverityByLevel(this.config.logLevel, stacker.entries)
+        excludeRecursiveBigInt(
+          excludeRecursiveReference(
+            filterSeverityByLevel(this.config.logLevel, stacker.entries)
+          )
         ),
         this.config.maskKeywords
       )

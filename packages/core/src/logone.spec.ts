@@ -172,6 +172,30 @@ describe('Logone', () => {
     })
   })
 
+  describe('convert bigint value', () => {
+    beforeEach(() => {
+      const adapter = new FakeAdapter()
+      v.set('adapter', adapter)
+      v.set('logone', new Logone(adapter))
+
+      const { logger, finish } = v.get('logone')!.start('test', {
+        case: 'entry has bigInt'
+      })
+
+      timer.after(1000)
+      logger.info('example 1', {
+        value: BigInt('0o377777777777777777')
+      })
+
+      finish()
+    })
+    it('should be output over INFO entries', () => {
+      expect(
+        v.get('adapter')?.outputs[0]?.runtime.lines[0]?.payload
+      ).toStrictEqual({ value: '9007199254740991' })
+    })
+  })
+
   describe('use logLevel option', () => {
     beforeEach(() => {
       const adapter = new FakeAdapter()
@@ -199,7 +223,6 @@ describe('Logone', () => {
       finish()
     })
     it('should be output over INFO entries', () => {
-      console.log(v.get('adapter')?.outputs)
       expect(v.get('adapter')?.outputs[0]?.runtime.lines).length(2)
     })
   })
