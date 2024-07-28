@@ -1,5 +1,11 @@
 # @logone/core
 
+## 0.0.6
+
+### Patch Changes
+
+- minimium fix bugs
+
 ## 0.0.5
 
 ### Patch Changes
