@@ -34,7 +34,7 @@ export type LoggerRecord = {
     elapsed: number
     lines: LogRecord[]
   }
-  config: LoggerConfig
+  config: Partial<LoggerConfig>
 }
 
 type LogRecordBase = {
