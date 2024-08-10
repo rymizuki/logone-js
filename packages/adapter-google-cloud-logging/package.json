@@ -1,0 +1,43 @@
+{
+  "name": "@logone/adapter-google-cloud-logging",
+  "private": false,
+  "version": "0.0.1",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "tsup --dts --outDir build --splitting false --sourcemap --clean ./src/index.ts",
+    "test": "vitest run",
+    "lint": "eslint --max-warnings 0 --ext .ts,.tsx .",
+    "format": "prettier -w './**/*.{ts,tsx,js,json,css}' --check"
+  },
+  "devDependencies": {
+    "@logone/core": "*",
+    "@logone/dev-config": "*",
+    "@logone/test-helper": "*",
+    "@types/node": "^20.10.4",
+    "tsup": "^8.0.2",
+    "vitest": "^1.0.4"
+  },
+  "files": [
+    "build/index.js",
+    "build/index.js.map",
+    "build/index.d.ts"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "mizuki_r",
+    "email": "ry.mizuki@gmail.com"
+  },
+  "description": "This library is logger that supports structured logging by generating a single line of JSON format for your specified lifecycle. Inspired by logone-go.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rymizuki/logone-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rymizuki/logone-js/issues"
+  },
+  "homepage": "https://github.com/rymizuki/logone-js#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}
