@@ -1,23 +1,36 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LogRecord } from '../interface'
 
-export const excludeRecursiveBigInt = (entries: LogRecord[]) => {
+export const convertObjectToString = (entries: LogRecord[]) => {
   return entries.map((entry) => ({
     ...entry,
     payload: createProcessor()(entry.payload)
   }))
 }
 
-function createProcessor() {
-  const convert = (value: bigint) => {
-    return value.toString()
+const replacer = {
+  bigint: {
+    check: (value: unknown) => typeof value === 'bigint',
+    replace: (value: bigint) => value.toString()
   }
+} as const
+
+function createProcessor() {
   const recursive: (payload: unknown) => unknown = (payload) => {
     if (!payload) return payload
-    if (typeof payload === 'bigint') return convert(payload)
+    for (const type of Object.keys(replacer) as (keyof typeof replacer)[]) {
+      if (!Object.prototype.hasOwnProperty.call(replacer, type)) {
+        continue
+      }
+      const { check, replace } = replacer[type]
+      if (check(payload)) {
+        return replace(payload)
+      }
+    }
     if (typeof payload !== 'object') return payload
     if (Array.isArray(payload)) {
       return payload.map((row) => recursive(row))
@@ -26,12 +39,7 @@ function createProcessor() {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const value = payload[prop]
-      prev[prop] =
-        typeof value === 'bigint'
-          ? convert(value)
-          : typeof value === 'object'
-            ? recursive(value)
-            : value
+      prev[prop] = recursive(value)
       return prev
     }, {} as any)
   }
