@@ -20,6 +20,15 @@ const replacer = {
   date: {
     check: (value: unknown) => value instanceof Date,
     replace: (value: Date) => value.toISOString()
+  },
+  error: {
+    check: (value: unknown) => value instanceof Error,
+    replace: (value: Error) => ({
+      name: value.name,
+      message: value.message,
+      cause: value.cause,
+      stack: value.stack
+    })
   }
 } as const
 
