@@ -1,20 +1,23 @@
 import { afterEach, beforeEach } from 'node:test'
 import { describe, expect, it, vi } from 'vitest'
 import { LogRecord } from '../interface'
-import { excludeRecursiveBigInt } from './exclude-recursive-bigint'
+import { convertObjectToString } from './convert-object-to-string'
 
 const entries: LogRecord[] = [
   {
     severity: 'INFO',
     message: 'example',
     payload: {
-      value1: BigInt(9007199254740991),
-      value2: {
-        value: BigInt(9007199254740991)
+      bigint1: BigInt(9007199254740991),
+      bigint2: {
+        bigint1: BigInt(9007199254740991),
+        bigint2: {
+          bigint: BigInt(9007199254740991)
+        }
       },
-      value3: [
+      bigint3: [
         {
-          value: BigInt(9007199254740991)
+          bigint: BigInt(9007199254740991)
         },
         BigInt(9007199254740991)
       ]
@@ -34,18 +37,21 @@ describe('exclude recursive reference', () => {
       vi.clearAllTimers()
     })
     it('remove duplicate value', () => {
-      expect(excludeRecursiveBigInt(entries)).toStrictEqual([
+      expect(convertObjectToString(entries)).toStrictEqual([
         {
           severity: 'INFO',
           message: 'example',
           payload: {
-            value1: BigInt(9007199254740991).toString(),
-            value2: {
-              value: BigInt(9007199254740991).toString()
+            bigint1: BigInt(9007199254740991).toString(),
+            bigint2: {
+              bigint1: BigInt(9007199254740991).toString(),
+              bigint2: {
+                bigint: BigInt(9007199254740991).toString()
+              }
             },
-            value3: [
+            bigint3: [
               {
-                value: BigInt(9007199254740991).toString()
+                bigint: BigInt(9007199254740991).toString()
               },
               BigInt(9007199254740991).toString()
             ]
