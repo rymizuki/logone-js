@@ -16,6 +16,10 @@ const replacer = {
   bigint: {
     check: (value: unknown) => typeof value === 'bigint',
     replace: (value: bigint) => value.toString()
+  },
+  date: {
+    check: (value: unknown) => value instanceof Date,
+    replace: (value: Date) => value.toISOString()
   }
 } as const
 
@@ -28,7 +32,7 @@ function createProcessor() {
       }
       const { check, replace } = replacer[type]
       if (check(payload)) {
-        return replace(payload)
+        return replace(payload as any)
       }
     }
     if (typeof payload !== 'object') return payload
