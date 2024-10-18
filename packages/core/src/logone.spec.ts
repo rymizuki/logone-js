@@ -195,6 +195,29 @@ describe('Logone', () => {
       ).toStrictEqual({ value: '9007199254740991' })
     })
   })
+  describe('convert date value', () => {
+    beforeEach(() => {
+      const adapter = new FakeAdapter()
+      v.set('adapter', adapter)
+      v.set('logone', new Logone(adapter))
+
+      const { logger, finish } = v.get('logone')!.start('test', {
+        case: 'entry has date'
+      })
+
+      timer.after(1000)
+      logger.info('example 1', {
+        value: new Date('2024/01/01 00:00:00')
+      })
+
+      finish()
+    })
+    it('should be output over INFO entries', () => {
+      expect(
+        v.get('adapter')?.outputs[0]?.runtime.lines[0]?.payload
+      ).toStrictEqual({ value: new Date('2024/01/01 00:00:00').toISOString() })
+    })
+  })
 
   describe('use logLevel option', () => {
     beforeEach(() => {
