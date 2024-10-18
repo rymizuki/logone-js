@@ -1,5 +1,5 @@
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "cSpell.ignoreWords": ["", "logone", "tsup"]
+  "cSpell.ignoreWords": ["", "jsonify", "logone", "tsup"]
 }

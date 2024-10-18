@@ -29,6 +29,11 @@ const replacer = {
       cause: value.cause,
       stack: value.stack
     })
+  },
+  jsonify: {
+    check: (value: unknown) =>
+      value && typeof value == 'object' && 'toJSON' in value,
+    replace: (value: { toJSON: () => string }) => value.toJSON()
   }
 } as const
 
