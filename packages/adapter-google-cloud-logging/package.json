@@ -10,6 +10,9 @@
     "lint": "eslint --max-warnings 0 --ext .ts,.tsx .",
     "format": "prettier -w './**/*.{ts,tsx,js,json,css}' --check"
   },
+  "dependencies": {
+    "@logone/adapter-node": "*"
+  },
   "devDependencies": {
     "@logone/core": "*",
     "@logone/dev-config": "*",
