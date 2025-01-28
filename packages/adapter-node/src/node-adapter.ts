@@ -14,7 +14,6 @@ export class NodeAdapter implements LoggerAdapter {
     ) => {
       const content = this.format(record)
 
-      console.log('buffer', Buffer.byteLength(content), content.length)
       if (
         !this.options.contentLengthLimit ||
         Buffer.byteLength(content) < this.options.contentLengthLimit
