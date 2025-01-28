@@ -1,5 +1,16 @@
 # @logone/express
 
+## 1.0.0-pre.0
+
+### Major Changes
+
+- v1.0.0-pre
+
+### Patch Changes
+
+- Updated dependencies
+  - @logone/core@1.0.0-pre.0
+
 ## 0.0.4
 
 ### Patch Changes

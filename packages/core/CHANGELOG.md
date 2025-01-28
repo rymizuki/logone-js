@@ -1,5 +1,11 @@
 # @logone/core
 
+## 1.0.0-pre.0
+
+### Major Changes
+
+- v1.0.0-pre
+
 ## 0.0.9
 
 ### Patch Changes

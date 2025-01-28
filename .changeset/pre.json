@@ -1,0 +1,15 @@
+{
+  "mode": "pre",
+  "tag": "pre",
+  "initialVersions": {
+    "@logone/adapter-google-cloud-logging": "0.0.1",
+    "@logone/adapter-node": "0.0.1",
+    "@logone/core": "0.0.9",
+    "@logone/dev-config": "0.0.0",
+    "@logone/express": "0.0.4",
+    "@logone/test-helper": "0.0.1"
+  },
+  "changesets": [
+    "dirty-mangos-pump"
+  ]
+}
