@@ -1,36 +1,24 @@
 import { LoggerAdapter, LoggerRecord } from '@logone/core'
+import { createCircularReplacer } from './create-circular-replacer'
 
-class NodeAdapter implements LoggerAdapter {
+export class NodeAdapter implements LoggerAdapter {
   output(record: LoggerRecord) {
     const severity = record.runtime.severity
-    if (
-      severity === 'CRITICAL' ||
-      severity === 'ERROR' ||
-      severity === 'WARNING'
-    ) {
-      this.outputToStderr(record)
-    } else {
-      this.outputToStdout(record)
-    }
+    const content = this.format(record)
+
+    const destination =
+      severity === 'CRITICAL' || severity === 'ERROR' || severity === 'WARNING'
+        ? 'stderr'
+        : 'stdout'
+    this.write(destination, content)
   }
 
-  private outputToStderr(record: LoggerRecord) {
-    process.stderr.write(`${JSON.stringify(record, getCircularReplacer())}\n`)
+  private format(record: LoggerRecord) {
+    return `${JSON.stringify(record, createCircularReplacer())}\n`
   }
 
-  private outputToStdout(record: LoggerRecord) {
-    process.stdout.write(`${JSON.stringify(record, getCircularReplacer())}\n`)
-  }
-}
-
-function getCircularReplacer() {
-  const seen = new WeakSet()
-  return (_key: string, value: unknown) => {
-    if (typeof value === 'object' && value !== null) {
-      if (seen.has(value)) return
-      seen.add(value)
-    }
-    return value
+  private write(destination: 'stdout' | 'stderr', content: string) {
+    process[destination].write(content)
   }
 }
 

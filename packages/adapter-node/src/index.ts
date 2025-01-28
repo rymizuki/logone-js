@@ -1,1 +1,1 @@
-export { createAdapter } from './node-adapter'
+export { NodeAdapter, createAdapter } from './node-adapter'
