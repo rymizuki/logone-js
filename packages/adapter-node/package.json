@@ -1,7 +1,7 @@
 {
   "name": "@logone/adapter-node",
   "private": false,
-  "version": "1.0.0-pre.0",
+  "version": "1.0.0-pre.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
@@ -11,7 +11,7 @@
     "format": "prettier -w './**/*.{ts,tsx,js,json,css}' --check"
   },
   "devDependencies": {
-    "@logone/core": "1.0.0-pre.0",
+    "@logone/core": "1.0.0-pre.1",
     "@logone/dev-config": "*",
     "@logone/test-helper": "*",
     "@types/node": "^20.10.4",

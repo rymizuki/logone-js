@@ -10,6 +10,7 @@
     "@logone/test-helper": "0.0.1"
   },
   "changesets": [
-    "dirty-mangos-pump"
+    "dirty-mangos-pump",
+    "long-numbers-serve"
   ]
 }
