@@ -1,20 +1,15 @@
 import { LoggerAdapter, LoggerRecord } from '@logone/core'
+import { NodeAdapter } from '@logone/adapter-node'
 
-class NodeAdapter implements LoggerAdapter {
-  output(record: LoggerRecord) {
-    const severity = record.runtime.severity
-    if (
-      severity === 'CRITICAL' ||
-      severity === 'ERROR' ||
-      severity === 'WARNING'
-    ) {
-      this.outputToStderr(record)
-    } else {
-      this.outputToStdout(record)
-    }
+class GoogleCloudLoggingAdapter implements LoggerAdapter {
+  private adapter: LoggerAdapter
+
+  constructor() {
+    this.adapter = new NodeAdapter({
+      contentLengthLimit: 16 * 1024
+    })
   }
-
-  private format(record: LoggerRecord) {
+  output(record: LoggerRecord) {
     const data: LoggerRecord & {
       time: string | Date
       severity: LoggerRecord['runtime']['severity']
@@ -34,18 +29,11 @@ class NodeAdapter implements LoggerAdapter {
         (line) => line.severity === 'CRITICAL'
       )?.message
     }
-    return `${JSON.stringify(data)}\n`
-  }
 
-  private outputToStderr(record: LoggerRecord) {
-    process.stderr.write(this.format(record))
-  }
-
-  private outputToStdout(record: LoggerRecord) {
-    process.stdout.write(this.format(record))
+    this.adapter.output(data)
   }
 }
 
 export function createAdapter() {
-  return new NodeAdapter()
+  return new GoogleCloudLoggingAdapter()
 }
