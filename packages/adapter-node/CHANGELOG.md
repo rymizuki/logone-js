@@ -1,5 +1,16 @@
 # @logone/adapter-node
 
+## 1.0.0
+
+### Major Changes
+
+- 4bd4190: v1.0.0-pre
+- publish v1.0.0
+
+### Patch Changes
+
+- 0a88e61: remove console.log
+
 ## 1.0.0-pre.1
 
 ### Patch Changes
