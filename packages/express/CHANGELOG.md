@@ -1,5 +1,13 @@
 # @logone/express
 
+## 1.0.1
+
+### Patch Changes
+
+- fix bugs
+- Updated dependencies
+  - @logone/core@1.0.1
+
 ## 1.0.0
 
 ### Major Changes

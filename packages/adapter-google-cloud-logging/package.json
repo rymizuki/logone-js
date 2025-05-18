@@ -1,7 +1,7 @@
 {
   "name": "@logone/adapter-google-cloud-logging",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
@@ -11,10 +11,10 @@
     "format": "prettier -w './**/*.{ts,tsx,js,json,css}' --check"
   },
   "dependencies": {
-    "@logone/adapter-node": "1.0.0"
+    "@logone/adapter-node": "1.0.1"
   },
   "devDependencies": {
-    "@logone/core": "1.0.0",
+    "@logone/core": "1.0.1",
     "@logone/dev-config": "*",
     "@logone/test-helper": "*",
     "@types/node": "^20.10.4",
