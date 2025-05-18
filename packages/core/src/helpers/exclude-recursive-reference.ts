@@ -23,6 +23,8 @@ function createExcludeRecursive() {
     if (Array.isArray(payload)) {
       return payload.map((row) => excludeRecursive(row))
     }
+    if (payload instanceof Date) return payload
+    if (payload instanceof BigInt) return BigInt
     return Object.keys(payload).reduce((prev, prop) => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

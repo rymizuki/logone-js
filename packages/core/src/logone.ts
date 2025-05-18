@@ -44,8 +44,8 @@ export class Logone {
       if (!stacker.hasEntries()) return
 
       const lines = maskPayloadSecretParameters(
-        excludeRecursiveReference(
-          convertObjectToString(
+        convertObjectToString(
+          excludeRecursiveReference(
             filterSeverityByLevel(this.config.logLevel, stacker.entries)
           )
         ),
