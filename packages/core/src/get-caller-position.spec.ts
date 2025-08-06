@@ -37,7 +37,6 @@ describe('Logger', () => {
         it('at function (file:line:column) 形式を正しく解析する', () => {
           function testFunction() {
             // この行の番号を記録（次の行が実際の呼び出し）
-            const expectedLine = 41
             logger.info('test from function')
           }
           
@@ -45,14 +44,14 @@ describe('Logger', () => {
           
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
-          expect(entry.fileLine).toBe(41)
+          expect(entry.fileLine).toBe(40)
         })
       })
 
       describe('直接呼び出しのスタックトレース形式', () => {
         it('at file:line:column 形式を正しく解析する', () => {
           // この行の番号を記録（次の行が実際の呼び出し）
-          const expectedLine = 56
+          const expectedLine = 55
           logger.warning('direct call test')
           
           const entry = stacker.entries[0]
@@ -66,7 +65,7 @@ describe('Logger', () => {
       describe('logger.tsからの呼び出し', () => {
         it('logger.ts以外の実際の呼び出し元が返される', () => {
           // この行の番号を記録（次の行が実際の呼び出し）
-          const expectedLine = 70
+          const expectedLine = 69
           logger.error('test message')
           
           const entry = stacker.entries[0]
@@ -120,7 +119,7 @@ describe('Logger', () => {
       describe('debug()メソッド呼び出し時', () => {
         it('正確な呼び出し元のファイル名と行番号が記録される', () => {
           // この行の番号を記録（次の行が実際の呼び出し）
-          const expectedLine = 124
+          const expectedLine = 123
           logger.debug('debug message')
           
           const entry = stacker.entries[0]
@@ -134,7 +133,7 @@ describe('Logger', () => {
       describe('info()メソッド呼び出し時', () => {
         it('正確な呼び出し元のファイル名と行番号が記録される', () => {
           // この行の番号を記録（次の行が実際の呼び出し）
-          const expectedLine = 138
+          const expectedLine = 137
           logger.info('info message')
           
           const entry = stacker.entries[0]
@@ -150,7 +149,6 @@ describe('Logger', () => {
           function outerFunction() {
             function innerFunction() {
               // この行の番号を記録（次の行が実際の呼び出し）
-              const expectedLine = 154
               logger.critical('nested call')
             }
             innerFunction()
@@ -160,7 +158,7 @@ describe('Logger', () => {
           
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
-          expect(entry.fileLine).toBe(154)
+          expect(entry.fileLine).toBe(152)
           expect(entry.severity).toBe('CRITICAL')
         })
       })
