@@ -63,7 +63,7 @@ export class Logger {
       const match = line.match(/\s+at\s+.*?\((.+):(\d+):\d+\)/) || 
                     line.match(/\s+at\s+(.+):(\d+):\d+/)
       
-      if (match) {
+      if (match && match[1] && match[2]) {
         const fileName = match[1]
         const lineNumber = parseInt(match[2], 10)
         
