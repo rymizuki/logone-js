@@ -35,6 +35,7 @@ describe('Logger', () => {
           {
             fileLine: 33,
             fileName: __filename,
+            funcName: null,
             message: 'hello',
             payload: [],
             severity: 'DEBUG',
@@ -48,8 +49,9 @@ describe('Logger', () => {
         v.get('logger')?.debug('hello', 1, { message: 'hello' })
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 48,
+            fileLine: 49,
             fileName: __filename,
+            funcName: null,
             message: 'hello',
             payload: [1, { message: 'hello' }],
             severity: 'DEBUG',
@@ -65,8 +67,9 @@ describe('Logger', () => {
         v.get('logger')?.info('hello')
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 65,
+            fileLine: 67,
             fileName: __filename,
+            funcName: null,
             message: 'hello',
             payload: [],
             severity: 'INFO',
@@ -80,8 +83,9 @@ describe('Logger', () => {
         v.get('logger')?.info('hello', 1, { message: 'hello' })
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 80,
+            fileLine: 83,
             fileName: __filename,
+            funcName: null,
             message: 'hello',
             payload: [1, { message: 'hello' }],
             severity: 'INFO',
@@ -97,8 +101,9 @@ describe('Logger', () => {
         v.get('logger')?.warning('hello')
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 97,
+            fileLine: 101,
             fileName: __filename,
+            funcName: null,
             message: 'hello',
             payload: [],
             severity: 'WARNING',
@@ -112,8 +117,9 @@ describe('Logger', () => {
         v.get('logger')?.warning('hello', 1, { message: 'hello' })
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 112,
+            fileLine: 117,
             fileName: __filename,
+            funcName: null,
             message: 'hello',
             payload: [1, { message: 'hello' }],
             severity: 'WARNING',
@@ -129,8 +135,9 @@ describe('Logger', () => {
         v.get('logger')?.error('hello')
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 129,
+            fileLine: 135,
             fileName: __filename,
+            funcName: null,
             message: 'hello',
             payload: [],
             severity: 'ERROR',
@@ -144,8 +151,9 @@ describe('Logger', () => {
         v.get('logger')?.error('hello', 1, { message: 'hello' })
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 144,
+            fileLine: 151,
             fileName: __filename,
+            funcName: null,
             message: 'hello',
             payload: [1, { message: 'hello' }],
             severity: 'ERROR',
@@ -161,8 +169,9 @@ describe('Logger', () => {
         v.get('logger')?.critical('hello')
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 161,
+            fileLine: 169,
             fileName: __filename,
+            funcName: null,
             message: 'hello',
             payload: [],
             severity: 'CRITICAL',
@@ -176,8 +185,9 @@ describe('Logger', () => {
         v.get('logger')?.critical('hello', 1, { message: 'hello' })
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 176,
+            fileLine: 185,
             fileName: __filename,
+            funcName: null,
             message: 'hello',
             payload: [1, { message: 'hello' }],
             severity: 'CRITICAL',
@@ -193,8 +203,9 @@ describe('Logger', () => {
         v.get('logger')?.record('DEBUG', 'hello')
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 193,
+            fileLine: 203,
             fileName: __filename,
+            funcName: null,
             message: 'hello',
             payload: [],
             severity: 'DEBUG',

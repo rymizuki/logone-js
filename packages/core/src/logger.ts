@@ -32,7 +32,7 @@ export class Logger {
     message: string,
     ...args: unknown[]
   ) {
-    const [fileName, fileLine] = this.getCallerPosition()
+    const [fileName, fileLine, funcName] = this.getCallerPosition()
 
     const entry: LogRecord = {
       severity,
@@ -40,16 +40,17 @@ export class Logger {
       message,
       payload: args.length === 1 ? args[0] : args,
       fileLine,
-      fileName
+      fileName,
+      funcName
     }
 
     this.stacker.stack(entry)
   }
 
-  private getCallerPosition(): [string | null, number | null] {
+  private getCallerPosition(): [string | null, number | null, string | null] {
     const stack = new Error().stack
     if (!stack) {
-      return [null, null]
+      return [null, null, null]
     }
     
     const rows = stack.split(/\n/)
@@ -59,23 +60,37 @@ export class Logger {
       const line = rows[i]
       if (!line) continue
       
-      // Node.jsのスタックトレース形式: "    at function (file:line:column)"
-      const match = line.match(/\s+at\s+.*?\((.+):(\d+):\d+\)/) || 
-                    line.match(/\s+at\s+(.+):(\d+):\d+/)
-      
-      if (match && match[1] && match[2]) {
-        const fileName = match[1]
-        const lineNumber = parseInt(match[2], 10)
+      // Node.jsのスタックトレース形式を解析
+      // 1. "    at functionName (file:line:column)" 形式
+      const funcMatch = line.match(/\s+at\s+([^(]+)\s*\((.+):(\d+):\d+\)/)
+      if (funcMatch && funcMatch[1] && funcMatch[2] && funcMatch[3]) {
+        const funcName = funcMatch[1].trim()
+        const fileName = funcMatch[2]
+        const lineNumber = parseInt(funcMatch[3], 10)
         
         // 内部ファイルをスキップ
         if (fileName.includes('logger.ts') || fileName.includes('node_modules')) {
           continue
         }
         
-        return [fileName, lineNumber]
+        return [fileName, lineNumber, funcName || null]
+      }
+      
+      // 2. "    at file:line:column" 形式（関数名なし）
+      const directMatch = line.match(/\s+at\s+(.+):(\d+):\d+/)
+      if (directMatch && directMatch[1] && directMatch[2]) {
+        const fileName = directMatch[1]
+        const lineNumber = parseInt(directMatch[2], 10)
+        
+        // 内部ファイルをスキップ
+        if (fileName.includes('logger.ts') || fileName.includes('node_modules')) {
+          continue
+        }
+        
+        return [fileName, lineNumber, null]
       }
     }
     
-    return [null, null]
+    return [null, null, null]
   }
 }
