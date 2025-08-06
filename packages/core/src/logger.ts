@@ -46,18 +46,36 @@ export class Logger {
     this.stacker.stack(entry)
   }
 
-  private getCallerPosition(): [string | null, number | null, number | null] {
+  private getCallerPosition(): [string | null, number | null] {
     const stack = new Error().stack
-    const rows = stack ? stack.split(/\n/) : []
-    const current = rows[4]
-    if (!current) {
-      return [null, null, null]
+    if (!stack) {
+      return [null, null]
     }
-    const [file, lines, chars] = current.replace(/\s*at\s+/, '').split(/:/)
-    return [
-      file ?? null,
-      lines ? Number(lines) : null,
-      chars ? Number(chars) : null
-    ]
+    
+    const rows = stack.split(/\n/)
+    
+    // 適切なコールスタックの行を見つける（通常は3-5行目あたり）
+    for (let i = 3; i < Math.min(rows.length, 7); i++) {
+      const line = rows[i]
+      if (!line) continue
+      
+      // Node.jsのスタックトレース形式: "    at function (file:line:column)"
+      const match = line.match(/\s+at\s+.*?\((.+):(\d+):\d+\)/) || 
+                    line.match(/\s+at\s+(.+):(\d+):\d+/)
+      
+      if (match) {
+        const fileName = match[1]
+        const lineNumber = parseInt(match[2], 10)
+        
+        // 内部ファイルをスキップ
+        if (fileName.includes('logger.ts') || fileName.includes('node_modules')) {
+          continue
+        }
+        
+        return [fileName, lineNumber]
+      }
+    }
+    
+    return [null, null]
   }
 }
