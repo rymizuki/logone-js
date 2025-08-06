@@ -55,20 +55,20 @@ export class Logger {
     
     const rows = stack.split(/\n/)
     
-    // 適切なコールスタックの行を見つける（通常は3-5行目あたり）
+    // Find appropriate call stack line (usually around lines 3-5)
     for (let i = 3; i < Math.min(rows.length, 7); i++) {
       const line = rows[i]
       if (!line) continue
       
-      // Node.jsのスタックトレース形式を解析
-      // 1. "    at functionName (file:line:column)" 形式
+      // Parse Node.js stack trace formats
+      // 1. "    at functionName (file:line:column)" format
       const funcMatch = line.match(/\s+at\s+([^(]+)\s*\((.+):(\d+):\d+\)/)
       if (funcMatch && funcMatch[1] && funcMatch[2] && funcMatch[3]) {
         const funcName = funcMatch[1].trim()
         const fileName = funcMatch[2]
         const lineNumber = parseInt(funcMatch[3], 10)
         
-        // 内部ファイルをスキップ
+        // Skip internal files
         if (fileName.includes('logger.ts') || fileName.includes('node_modules')) {
           continue
         }
@@ -76,13 +76,13 @@ export class Logger {
         return [fileName, lineNumber, funcName || null]
       }
       
-      // 2. "    at file:line:column" 形式（関数名なし）
+      // 2. "    at file:line:column" format (no function name)
       const directMatch = line.match(/\s+at\s+(.+):(\d+):\d+/)
       if (directMatch && directMatch[1] && directMatch[2]) {
         const fileName = directMatch[1]
         const lineNumber = parseInt(directMatch[2], 10)
         
-        // 内部ファイルをスキップ
+        // Skip internal files
         if (fileName.includes('logger.ts') || fileName.includes('node_modules')) {
           continue
         }

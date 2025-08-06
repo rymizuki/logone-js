@@ -20,24 +20,24 @@ describe('Logger', () => {
       vi.restoreAllMocks()
     })
 
-    describe('正常なスタックトレース解析', () => {
-      describe('標準的なNode.jsスタックトレースが存在する場合', () => {
-        it('ファイル名と行番号のタプルが返される', () => {
-          // この行の番号を記録（次の行が実際の呼び出し）
+    describe('Normal stack trace parsing', () => {
+      describe('when standard Node.js stack trace exists', () => {
+        it('should return fileName and fileLine tuple', () => {
+          // Record line number (next line is actual call)
           const expectedLine = 28
           logger.debug('test message')
           
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(expectedLine)
-          expect(entry.funcName).toBeNull() // トップレベルの呼び出しなので関数名はnull
+          expect(entry.funcName).toBeNull() // No function name for top-level calls
         })
       })
 
-      describe('関数呼び出しのスタックトレース形式', () => {
-        it('at function (file:line:column) 形式を正しく解析する', () => {
+      describe('function call stack trace format', () => {
+        it('should correctly parse "at function (file:line:column)" format', () => {
           function testFunction() {
-            // この行の番号を記録（次の行が実際の呼び出し）
+            // Record line number (next line is actual call)
             logger.info('test from function')
           }
           
@@ -46,28 +46,28 @@ describe('Logger', () => {
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(41)
-          expect(entry.funcName).toBe('testFunction') // 関数名が取得される
+          expect(entry.funcName).toBe('testFunction') // Function name should be extracted
         })
       })
 
-      describe('直接呼び出しのスタックトレース形式', () => {
-        it('at file:line:column 形式を正しく解析する', () => {
-          // この行の番号を記録（次の行が実際の呼び出し）
+      describe('direct call stack trace format', () => {
+        it('should correctly parse "at file:line:column" format', () => {
+          // Record line number (next line is actual call)
           const expectedLine = 57
           logger.warning('direct call test')
           
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(expectedLine)
-          expect(entry.funcName).toBeNull() // 直接呼び出しなので関数名はnull
+          expect(entry.funcName).toBeNull() // No function name for direct calls
         })
       })
     })
 
-    describe('内部ファイルのスキップ', () => {
-      describe('logger.tsからの呼び出し', () => {
-        it('logger.ts以外の実際の呼び出し元が返される', () => {
-          // この行の番号を記録（次の行が実際の呼び出し）
+    describe('Internal file skipping', () => {
+      describe('calls from logger.ts', () => {
+        it('should return actual caller outside of logger.ts', () => {
+          // Record line number (next line is actual call)
           const expectedLine = 72
           logger.error('test message')
           
@@ -75,86 +75,86 @@ describe('Logger', () => {
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileName).not.toContain('logger.ts')
           expect(entry.fileLine).toBe(expectedLine)
-          expect(entry.funcName).toBeNull() // トップレベルの呼び出しなので関数名はnull
+          expect(entry.funcName).toBeNull() // No function name for top-level calls
         })
       })
 
-      describe('node_modulesからの呼び出し', () => {
-        it.todo('node_modules以外の実際の呼び出し元が返される')
-        // Note: このテストは実際のnode_modulesからの呼び出しをシミュレートするのが困難
+      describe('calls from node_modules', () => {
+        it.todo('should return actual caller outside of node_modules')
+        // Note: This test is difficult to simulate actual calls from node_modules
       })
     })
 
-    describe('エラーケース', () => {
-      describe('スタックトレースが存在しない場合', () => {
-        it.todo('[null, null]が返される')
-        // Note: Error.prototype.stackのモッキングは複雑で実際のユースケースでは発生しにくい
+    describe('Error cases', () => {
+      describe('when stack trace does not exist', () => {
+        it.todo('should return [null, null]')
+        // Note: Mocking Error.prototype.stack is complex and unlikely to occur in actual use cases
       })
 
-      describe('スタックトレースが空文字列の場合', () => {
-        it.todo('[null, null]が返される')
-        // Note: Error.prototype.stackのモッキングは複雑で実際のユースケースでは発生しにくい  
+      describe('when stack trace is empty string', () => {
+        it.todo('should return [null, null]')
+        // Note: Mocking Error.prototype.stack is complex and unlikely to occur in actual use cases  
       })
 
-      describe('有効な呼び出し元が見つからない場合', () => {
-        it.todo('[null, null]が返される')
-        // Note: 実際の環境で有効な呼び出し元が見つからない状況をシミュレートするのは困難
+      describe('when no valid caller is found', () => {
+        it.todo('should return [null, null]')
+        // Note: It is difficult to simulate situations where no valid caller is found in actual environments
       })
 
-      describe('正規表現にマッチしないスタックトレース形式', () => {
-        it.todo('[null, null]が返される')
-        // Note: Error.prototype.stackのモッキングは複雑で実際のユースケースでは発生しにくい
-      })
-    })
-
-    describe('境界値テスト', () => {
-      describe('スタックトレースの行数が3行未満の場合', () => {
-        it.todo('[null, null]が返される')
-        // Note: Error.prototype.stackのモッキングは複雑で実際のユースケースでは発生しにくい
-      })
-
-      describe('スタックトレースの行数が7行以上の場合', () => {
-        it.todo('3-6行目の範囲内で有効な呼び出し元が検索される')
-        // Note: Error.prototype.stackのモッキングは複雑で実際のユースケースでは発生しにくい
+      describe('stack trace format that does not match regex', () => {
+        it.todo('should return [null, null]')
+        // Note: Mocking Error.prototype.stack is complex and unlikely to occur in actual use cases
       })
     })
 
-    describe('実際の使用シナリオ', () => {
-      describe('debug()メソッド呼び出し時', () => {
-        it('正確な呼び出し元のファイル名と行番号が記録される', () => {
-          // この行の番号を記録（次の行が実際の呼び出し）
+    describe('Boundary value tests', () => {
+      describe('when stack trace has fewer than 3 lines', () => {
+        it.todo('should return [null, null]')
+        // Note: Mocking Error.prototype.stack is complex and unlikely to occur in actual use cases
+      })
+
+      describe('when stack trace has 7 or more lines', () => {
+        it.todo('should search for valid caller within lines 3-6 range')
+        // Note: Mocking Error.prototype.stack is complex and unlikely to occur in actual use cases
+      })
+    })
+
+    describe('Actual usage scenarios', () => {
+      describe('when calling debug() method', () => {
+        it('should record accurate caller fileName and fileLine', () => {
+          // Record line number (next line is actual call)
           const expectedLine = 127
           logger.debug('debug message')
           
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(expectedLine)
-          expect(entry.funcName).toBeNull() // トップレベルの呼び出しなので関数名はnull
+          expect(entry.funcName).toBeNull() // No function name for top-level calls
           expect(entry.severity).toBe('DEBUG')
           expect(entry.message).toBe('debug message')
         })
       })
 
-      describe('info()メソッド呼び出し時', () => {
-        it('正確な呼び出し元のファイル名と行番号が記録される', () => {
-          // この行の番号を記録（次の行が実際の呼び出し）
+      describe('when calling info() method', () => {
+        it('should record accurate caller fileName and fileLine', () => {
+          // Record line number (next line is actual call)
           const expectedLine = 142
           logger.info('info message')
           
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(expectedLine)
-          expect(entry.funcName).toBeNull() // トップレベルの呼び出しなので関数名はnull
+          expect(entry.funcName).toBeNull() // No function name for top-level calls
           expect(entry.severity).toBe('INFO')
           expect(entry.message).toBe('info message')
         })
       })
 
-      describe('入れ子関数からの呼び出し時', () => {
-        it('最初の非logger.tsファイルの位置が記録される', () => {
+      describe('when calling from nested functions', () => {
+        it('should record first non-logger.ts file position', () => {
           function outerFunction() {
             function innerFunction() {
-              // この行の番号を記録（次の行が実際の呼び出し）
+              // Record line number (next line is actual call)
               logger.critical('nested call')
             }
             innerFunction()
@@ -165,7 +165,7 @@ describe('Logger', () => {
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(158)
-          expect(entry.funcName).toBe('innerFunction') // 関数名が取得される
+          expect(entry.funcName).toBe('innerFunction') // Function name should be extracted
           expect(entry.severity).toBe('CRITICAL')
         })
       })
