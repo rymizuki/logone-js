@@ -1,5 +1,19 @@
 # @logone/core
 
+## 1.0.2
+
+### Patch Changes
+
+- Fix logger caller position detection and add funcName field
+
+  - Fixed incorrect fileLine and fileName detection in logger's getCallerPosition method
+  - Changed from fixed stack trace index to dynamic regex-based parsing
+  - Added support for different Node.js stack trace formats
+  - Skip internal files (logger.ts, node_modules) when finding caller position
+  - Added funcName field to LogRecord to capture the calling function name
+  - Fixed return type to match actual implementation
+  - Added comprehensive tests for caller position detection
+
 ## 1.0.1
 
 ### Patch Changes
