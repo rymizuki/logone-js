@@ -44,6 +44,7 @@ type LogRecordBase = {
   time: Date
   fileLine: number | null
   fileName: string | null
+  funcName: string | null
   tags?: string[]
   attributes?: string
 }

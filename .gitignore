@@ -5,3 +5,9 @@ node_modules
 .cache
 dist
 build
+
+# Claude Code settings
+.claude/*.local.json
+
+# Serena cache
+.serena/cache

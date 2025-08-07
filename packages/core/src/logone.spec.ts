@@ -66,6 +66,7 @@ describe('Logone', () => {
             {
               fileLine: 40,
               fileName: __filename,
+              funcName: null,
               message: 'example 1',
               payload: [],
               severity: 'INFO',
@@ -74,6 +75,7 @@ describe('Logone', () => {
             {
               fileLine: 43,
               fileName: __filename,
+              funcName: null,
               message: 'example 2',
               payload: [],
               severity: 'DEBUG',
@@ -82,6 +84,7 @@ describe('Logone', () => {
             {
               fileLine: 46,
               fileName: __filename,
+              funcName: null,
               message: 'example 3',
               payload: [],
               severity: 'ERROR',
@@ -141,24 +144,27 @@ describe('Logone', () => {
           endTime: timer.current,
           lines: [
             {
-              fileLine: 114,
+              fileLine: 117,
               fileName: __filename,
+              funcName: null,
               message: 'example 1',
               payload: { username: 'example', password: '*******' },
               severity: 'INFO',
               time: timer.fromStartingTimeAt(1000)
             },
             {
-              fileLine: 120,
+              fileLine: 123,
               fileName: __filename,
+              funcName: null,
               message: 'example 2',
               payload: [],
               severity: 'DEBUG',
               time: timer.fromStartingTimeAt(2000)
             },
             {
-              fileLine: 123,
+              fileLine: 126,
               fileName: __filename,
+              funcName: null,
               message: 'example 3',
               payload: [],
               severity: 'ERROR',

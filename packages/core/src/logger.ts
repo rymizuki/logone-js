@@ -32,7 +32,7 @@ export class Logger {
     message: string,
     ...args: unknown[]
   ) {
-    const [fileName, fileLine] = this.getCallerPosition()
+    const [fileName, fileLine, funcName] = this.getCallerPosition()
 
     const entry: LogRecord = {
       severity,
@@ -40,24 +40,57 @@ export class Logger {
       message,
       payload: args.length === 1 ? args[0] : args,
       fileLine,
-      fileName
+      fileName,
+      funcName
     }
 
     this.stacker.stack(entry)
   }
 
-  private getCallerPosition(): [string | null, number | null, number | null] {
+  private getCallerPosition(): [string | null, number | null, string | null] {
     const stack = new Error().stack
-    const rows = stack ? stack.split(/\n/) : []
-    const current = rows[4]
-    if (!current) {
+    if (!stack) {
       return [null, null, null]
     }
-    const [file, lines, chars] = current.replace(/\s*at\s+/, '').split(/:/)
-    return [
-      file ?? null,
-      lines ? Number(lines) : null,
-      chars ? Number(chars) : null
-    ]
+    
+    const rows = stack.split(/\n/)
+    
+    // Find appropriate call stack line (usually around lines 3-5)
+    for (let i = 3; i < Math.min(rows.length, 7); i++) {
+      const line = rows[i]
+      if (!line) continue
+      
+      // Parse Node.js stack trace formats
+      // 1. "    at functionName (file:line:column)" format
+      const funcMatch = line.match(/\s+at\s+([^(]+)\s*\((.+):(\d+):\d+\)/)
+      if (funcMatch && funcMatch[1] && funcMatch[2] && funcMatch[3]) {
+        const funcName = funcMatch[1].trim()
+        const fileName = funcMatch[2]
+        const lineNumber = parseInt(funcMatch[3], 10)
+        
+        // Skip internal files
+        if (fileName.includes('logger.ts') || fileName.includes('node_modules')) {
+          continue
+        }
+        
+        return [fileName, lineNumber, funcName || null]
+      }
+      
+      // 2. "    at file:line:column" format (no function name)
+      const directMatch = line.match(/\s+at\s+(.+):(\d+):\d+/)
+      if (directMatch && directMatch[1] && directMatch[2]) {
+        const fileName = directMatch[1]
+        const lineNumber = parseInt(directMatch[2], 10)
+        
+        // Skip internal files
+        if (fileName.includes('logger.ts') || fileName.includes('node_modules')) {
+          continue
+        }
+        
+        return [fileName, lineNumber, null]
+      }
+    }
+    
+    return [null, null, null]
   }
 }
