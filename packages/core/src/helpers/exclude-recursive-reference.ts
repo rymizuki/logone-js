@@ -24,7 +24,20 @@ function createExcludeRecursive() {
       return payload.map((row) => excludeRecursive(row))
     }
     if (payload instanceof Date) return payload
-    if (payload instanceof BigInt) return BigInt
+    if (typeof payload === 'bigint') return payload
+    
+    // Check if object has toJSON method that returns self
+    if ('toJSON' in payload && typeof payload.toJSON === 'function') {
+      try {
+        const jsonResult = payload.toJSON()
+        if (jsonResult === payload) {
+          return '[Circular]'
+        }
+      } catch (e) {
+        // Ignore errors from toJSON
+      }
+    }
+    
     return Object.keys(payload).reduce((prev, prop) => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

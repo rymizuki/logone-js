@@ -68,4 +68,34 @@ describe('exclude recursive reference', () => {
       ])
     })
   })
+
+  describe('on bigint values', () => {
+    it('should preserve bigint values', () => {
+      const entriesWithBigInt: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'bigint test',
+          payload: {
+            bigintValue: BigInt(9007199254740991),
+            nested: {
+              anotherBigInt: BigInt(-123456789012345)
+            },
+            array: [BigInt(42), BigInt(0)]
+          },
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+      
+      const result = excludeRecursiveReference(entriesWithBigInt)
+      expect(result[0]?.payload).toStrictEqual({
+        bigintValue: BigInt(9007199254740991),
+        nested: {
+          anotherBigInt: BigInt(-123456789012345)
+        },
+        array: [BigInt(42), BigInt(0)]
+      })
+    })
+  })
 })
