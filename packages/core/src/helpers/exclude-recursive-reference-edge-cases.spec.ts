@@ -115,6 +115,7 @@ describe('exclude-recursive-reference edge cases', () => {
       // toJSON is not called by excludeRecursiveReference
       expect(result[0]?.payload).toStrictEqual({
         internal: 'hidden',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         toJSON: expect.any(Function)
       })
     })
@@ -124,12 +125,12 @@ describe('exclude-recursive-reference edge cases', () => {
     it('should handle objects with circular prototype chain', () => {
       // Create objects with circular prototype chain
       const proto1 = { type: 'proto1' }
-      const proto2 = Object.create(proto1)
+      const proto2 = Object.create(proto1) as { type: string }
       proto2.type = 'proto2'
       
       // This would create a circular prototype chain if JS allowed it
       // But JS prevents this, so we test inherited properties instead
-      const obj = Object.create(proto2)
+      const obj = Object.create(proto2) as { name: string; proto: typeof proto2 }
       obj.name = 'instance'
       obj.proto = proto2
       
@@ -173,6 +174,7 @@ describe('exclude-recursive-reference edge cases', () => {
       expect(result[0]?.payload).toStrictEqual({
         visible: 'yes'
       })
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(result[0]?.payload[sym]).toBeUndefined()
     })
 
@@ -205,8 +207,10 @@ describe('exclude-recursive-reference edge cases', () => {
       const proxy = new Proxy(target, {
         get(target, prop) {
           if (prop === 'self') {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return proxy
           }
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return target[prop as keyof typeof target]
         },
         ownKeys(target) {
@@ -214,6 +218,7 @@ describe('exclude-recursive-reference edge cases', () => {
         },
         getOwnPropertyDescriptor(target, prop) {
           if (prop === 'self') {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             return { configurable: true, enumerable: true, value: proxy }
           }
           return Object.getOwnPropertyDescriptor(target, prop)
@@ -223,6 +228,7 @@ describe('exclude-recursive-reference edge cases', () => {
       const entries: LogRecord[] = [{
         severity: 'INFO',
         message: 'test',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         payload: { proxy },
         time: new Date(),
         fileLine: null,
@@ -239,7 +245,7 @@ describe('exclude-recursive-reference edge cases', () => {
     })
 
     it('should handle Proxy that throws on property access', () => {
-      const proxy = new Proxy({}, {
+      const proxy = new Proxy({} as Record<string, unknown>, {
         get() {
           throw new Error('Access denied')
         },
@@ -267,7 +273,8 @@ describe('exclude-recursive-reference edge cases', () => {
 
   describe('edge case objects', () => {
     it('should handle objects with null prototype', () => {
-      const obj = Object.create(null)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const obj = Object.create(null) as { name: string; data: { nested: boolean } }
       obj.name = 'no-proto'
       obj.data = { nested: true }
       
@@ -288,8 +295,20 @@ describe('exclude-recursive-reference edge cases', () => {
     })
 
     it('should handle deeply nested circular references', () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const obj: any = {
+      interface DeepNested {
+        level1: {
+          level2: {
+            level3: {
+              level4: {
+                backToRoot?: DeepNested
+              }
+            }
+            backToLevel1?: DeepNested['level1']
+          }
+        }
+      }
+      
+      const obj: DeepNested = {
         level1: {
           level2: {
             level3: {
