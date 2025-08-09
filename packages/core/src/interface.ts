@@ -57,3 +57,7 @@ export type LogRecord = LogRecordBase | LogRecordError
 export interface LoggerAdapter {
   output(record: LoggerRecord): void
 }
+
+export interface StreamingAdapter extends LoggerAdapter {
+  onEntry?(entry: LogRecord, config: LogoneConfig): void
+}
