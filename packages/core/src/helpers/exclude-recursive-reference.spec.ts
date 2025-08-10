@@ -87,7 +87,7 @@ describe('exclude recursive reference', () => {
           fileName: null
         }
       ]
-      
+
       const result = excludeRecursiveReference(entriesWithBigInt)
       expect(result[0]?.payload).toStrictEqual({
         bigintValue: BigInt(9007199254740991),

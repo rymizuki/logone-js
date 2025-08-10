@@ -1,5 +1,16 @@
 # @logone/express
 
+## 2.0.0
+
+### Minor Changes
+
+- Minor version bump for all packages
+
+### Patch Changes
+
+- Updated dependencies
+  - @logone/core@1.1.0
+
 ## 1.0.1
 
 ### Patch Changes

@@ -1,4 +1,9 @@
-import { LogRecord, StreamingAdapter, LogoneConfig, LoggerRecord } from '../interface'
+import {
+  LogRecord,
+  StreamingAdapter,
+  LogoneConfig,
+  LoggerRecord
+} from '../interface'
 import { filterSeverityByLevel } from '../helpers/log-level'
 import { maskPayloadSecretParameters } from '../helpers/mask-secret-parameters'
 import { convertObjectToString } from '../helpers/convert-object-to-string'
@@ -23,7 +28,7 @@ export class SSEAdapter implements StreamingAdapter {
     // Apply log level filtering
     const severityLevel = config.logLevel || 'DEBUG'
     const filtered = filterSeverityByLevel(severityLevel, [entry])
-    
+
     if (filtered.length === 0) {
       return // Entry filtered out by log level
     }
@@ -40,7 +45,7 @@ export class SSEAdapter implements StreamingAdapter {
         type: 'log',
         entry: masked[0]
       })
-      
+
       this.response.write(`data: ${data}\n\n`)
     }
   }
@@ -54,7 +59,7 @@ export class SSEAdapter implements StreamingAdapter {
       type: 'summary',
       record
     })
-    
+
     this.response.write(`data: ${data}\n\n`)
     this.response.end()
   }
@@ -62,26 +67,26 @@ export class SSEAdapter implements StreamingAdapter {
 
 /**
  * Example usage with Express.js:
- * 
+ *
  * app.get('/logs/stream', (req, res) => {
  *   res.setHeader('Content-Type', 'text/event-stream')
  *   res.setHeader('Cache-Control', 'no-cache')
  *   res.setHeader('Connection', 'keep-alive')
- *   
+ *
  *   const adapter = new SSEAdapter(res)
  *   const logone = new Logone(adapter, {
  *     logLevel: 'INFO',
  *     maskKeywords: ['password', 'token']
  *   })
- *   
+ *
  *   const { logger, finish } = logone.start('sse-request', {
  *     requestId: req.id
  *   })
- *   
+ *
  *   // Your application logic here
  *   logger.info('Processing request')
  *   // ...
- *   
+ *
  *   req.on('close', () => {
  *     finish()
  *   })
@@ -90,13 +95,13 @@ export class SSEAdapter implements StreamingAdapter {
 
 /**
  * Example with subscription pattern:
- * 
+ *
  * app.get('/logs/subscribe', (req, res) => {
  *   res.setHeader('Content-Type', 'text/event-stream')
  *   res.setHeader('Cache-Control', 'no-cache')
- *   
+ *
  *   const logone = getSharedLogoneInstance()
- *   
+ *
  *   const unsubscribe = logone.subscribe((entry) => {
  *     const data = JSON.stringify({
  *       type: 'log',
@@ -104,7 +109,7 @@ export class SSEAdapter implements StreamingAdapter {
  *     })
  *     res.write(`data: ${data}\n\n`)
  *   })
- *   
+ *
  *   req.on('close', () => {
  *     unsubscribe()
  *   })

@@ -26,7 +26,7 @@ describe('Logger', () => {
           // Record line number (next line is actual call)
           const expectedLine = 28
           logger.debug('test message')
-          
+
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(expectedLine)
@@ -40,9 +40,9 @@ describe('Logger', () => {
             // Record line number (next line is actual call)
             logger.info('test from function')
           }
-          
+
           testFunction()
-          
+
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(41)
@@ -55,7 +55,7 @@ describe('Logger', () => {
           // Record line number (next line is actual call)
           const expectedLine = 57
           logger.warning('direct call test')
-          
+
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(expectedLine)
@@ -70,7 +70,7 @@ describe('Logger', () => {
           // Record line number (next line is actual call)
           const expectedLine = 72
           logger.error('test message')
-          
+
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileName).not.toContain('logger.ts')
@@ -93,7 +93,7 @@ describe('Logger', () => {
 
       describe('when stack trace is empty string', () => {
         it.todo('should return [null, null]')
-        // Note: Mocking Error.prototype.stack is complex and unlikely to occur in actual use cases  
+        // Note: Mocking Error.prototype.stack is complex and unlikely to occur in actual use cases
       })
 
       describe('when no valid caller is found', () => {
@@ -125,7 +125,7 @@ describe('Logger', () => {
           // Record line number (next line is actual call)
           const expectedLine = 127
           logger.debug('debug message')
-          
+
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(expectedLine)
@@ -140,7 +140,7 @@ describe('Logger', () => {
           // Record line number (next line is actual call)
           const expectedLine = 142
           logger.info('info message')
-          
+
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(expectedLine)
@@ -159,9 +159,9 @@ describe('Logger', () => {
             }
             innerFunction()
           }
-          
+
           outerFunction()
-          
+
           const entry = stacker.entries[0]
           expect(entry.fileName).toContain('get-caller-position.spec.ts')
           expect(entry.fileLine).toBe(158)

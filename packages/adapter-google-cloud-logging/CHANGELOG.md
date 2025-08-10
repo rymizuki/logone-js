@@ -1,5 +1,16 @@
 # @logone/adapter-google-cloud-logging
 
+## 1.1.0
+
+### Minor Changes
+
+- Minor version bump for all packages
+
+### Patch Changes
+
+- Updated dependencies
+  - @logone/adapter-node@1.1.0
+
 ## 1.0.1
 
 ### Patch Changes

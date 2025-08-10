@@ -48,7 +48,7 @@ export class Logger {
     }
 
     this.stacker.stack(entry)
-    
+
     // Notify via callback if provided
     if (this.options?.onEntry) {
       this.options.onEntry(entry)
@@ -60,14 +60,14 @@ export class Logger {
     if (!stack) {
       return [null, null, null]
     }
-    
+
     const rows = stack.split(/\n/)
-    
+
     // Find appropriate call stack line (usually around lines 3-5)
     for (let i = 3; i < Math.min(rows.length, 7); i++) {
       const line = rows[i]
       if (!line) continue
-      
+
       // Parse Node.js stack trace formats
       // 1. "    at functionName (file:line:column)" format
       const funcMatch = line.match(/\s+at\s+([^(]+)\s*\((.+):(\d+):\d+\)/)
@@ -75,30 +75,36 @@ export class Logger {
         const funcName = funcMatch[1].trim()
         const fileName = funcMatch[2]
         const lineNumber = parseInt(funcMatch[3], 10)
-        
+
         // Skip internal files
-        if (fileName.includes('logger.ts') || fileName.includes('node_modules')) {
+        if (
+          fileName.includes('logger.ts') ||
+          fileName.includes('node_modules')
+        ) {
           continue
         }
-        
+
         return [fileName, lineNumber, funcName || null]
       }
-      
+
       // 2. "    at file:line:column" format (no function name)
       const directMatch = line.match(/\s+at\s+(.+):(\d+):\d+/)
       if (directMatch && directMatch[1] && directMatch[2]) {
         const fileName = directMatch[1]
         const lineNumber = parseInt(directMatch[2], 10)
-        
+
         // Skip internal files
-        if (fileName.includes('logger.ts') || fileName.includes('node_modules')) {
+        if (
+          fileName.includes('logger.ts') ||
+          fileName.includes('node_modules')
+        ) {
           continue
         }
-        
+
         return [fileName, lineNumber, null]
       }
     }
-    
+
     return [null, null, null]
   }
 }

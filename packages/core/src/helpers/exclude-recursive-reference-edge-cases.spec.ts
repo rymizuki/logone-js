@@ -14,16 +14,18 @@ describe('exclude-recursive-reference edge cases', () => {
           return this
         }
       }
-      
-      const entries: LogRecord[] = [{
-        severity: 'INFO',
-        message: 'test',
-        payload: { data: obj },
-        time: new Date(),
-        fileLine: null,
-        fileName: null
-      }]
-      
+
+      const entries: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'test',
+          payload: { data: obj },
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+
       const result = excludeRecursiveReference(entries)
       expect(result[0]?.payload).toStrictEqual({
         data: {
@@ -41,7 +43,7 @@ describe('exclude-recursive-reference edge cases', () => {
           return parent
         }
       }
-      
+
       const parent = {
         name: 'parent',
         child,
@@ -49,16 +51,18 @@ describe('exclude-recursive-reference edge cases', () => {
           return this
         }
       }
-      
-      const entries: LogRecord[] = [{
-        severity: 'INFO',
-        message: 'test',
-        payload: parent,
-        time: new Date(),
-        fileLine: null,
-        fileName: null
-      }]
-      
+
+      const entries: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'test',
+          payload: parent,
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+
       const result = excludeRecursiveReference(entries)
       expect(result[0]?.payload).toStrictEqual({
         name: 'parent',
@@ -79,16 +83,18 @@ describe('exclude-recursive-reference edge cases', () => {
           return this
         }
       }
-      
-      const entries: LogRecord[] = [{
-        severity: 'INFO',
-        message: 'test',
-        payload: { data: obj },
-        time: new Date(),
-        fileLine: null,
-        fileName: null
-      }]
-      
+
+      const entries: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'test',
+          payload: { data: obj },
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+
       const result = excludeRecursiveReference(entries)
       // toJSON that returns self causes circular reference
       expect(result[0]?.payload.data).toBe('[Circular]')
@@ -101,16 +107,18 @@ describe('exclude-recursive-reference edge cases', () => {
           return { public: 'visible', nested: { data: 'test' } }
         }
       }
-      
-      const entries: LogRecord[] = [{
-        severity: 'INFO',
-        message: 'test',
-        payload: obj,
-        time: new Date(),
-        fileLine: null,
-        fileName: null
-      }]
-      
+
+      const entries: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'test',
+          payload: obj,
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+
       const result = excludeRecursiveReference(entries)
       // toJSON is not called by excludeRecursiveReference
       expect(result[0]?.payload).toStrictEqual({
@@ -127,22 +135,27 @@ describe('exclude-recursive-reference edge cases', () => {
       const proto1 = { type: 'proto1' }
       const proto2 = Object.create(proto1) as { type: string }
       proto2.type = 'proto2'
-      
+
       // This would create a circular prototype chain if JS allowed it
       // But JS prevents this, so we test inherited properties instead
-      const obj = Object.create(proto2) as { name: string; proto: typeof proto2 }
+      const obj = Object.create(proto2) as {
+        name: string
+        proto: typeof proto2
+      }
       obj.name = 'instance'
       obj.proto = proto2
-      
-      const entries: LogRecord[] = [{
-        severity: 'INFO',
-        message: 'test',
-        payload: obj,
-        time: new Date(),
-        fileLine: null,
-        fileName: null
-      }]
-      
+
+      const entries: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'test',
+          payload: obj,
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+
       const result = excludeRecursiveReference(entries)
       expect(result[0]?.payload).toStrictEqual({
         name: 'instance',
@@ -160,16 +173,18 @@ describe('exclude-recursive-reference edge cases', () => {
         visible: 'yes',
         [sym]: 'hidden'
       }
-      
-      const entries: LogRecord[] = [{
-        severity: 'INFO',
-        message: 'test',
-        payload: obj,
-        time: new Date(),
-        fileLine: null,
-        fileName: null
-      }]
-      
+
+      const entries: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'test',
+          payload: obj,
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+
       const result = excludeRecursiveReference(entries)
       expect(result[0]?.payload).toStrictEqual({
         visible: 'yes'
@@ -184,16 +199,18 @@ describe('exclude-recursive-reference edge cases', () => {
         value: 'secret',
         enumerable: false
       })
-      
-      const entries: LogRecord[] = [{
-        severity: 'INFO',
-        message: 'test',
-        payload: obj,
-        time: new Date(),
-        fileLine: null,
-        fileName: null
-      }]
-      
+
+      const entries: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'test',
+          payload: obj,
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+
       const result = excludeRecursiveReference(entries)
       expect(result[0]?.payload).toStrictEqual({
         visible: 'yes'
@@ -224,17 +241,19 @@ describe('exclude-recursive-reference edge cases', () => {
           return Object.getOwnPropertyDescriptor(target, prop)
         }
       })
-      
-      const entries: LogRecord[] = [{
-        severity: 'INFO',
-        message: 'test',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        payload: { proxy },
-        time: new Date(),
-        fileLine: null,
-        fileName: null
-      }]
-      
+
+      const entries: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'test',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          payload: { proxy },
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+
       const result = excludeRecursiveReference(entries)
       expect(result[0]?.payload).toStrictEqual({
         proxy: {
@@ -256,16 +275,18 @@ describe('exclude-recursive-reference edge cases', () => {
           return { configurable: true, enumerable: true }
         }
       })
-      
-      const entries: LogRecord[] = [{
-        severity: 'INFO',
-        message: 'test',
-        payload: { proxy },
-        time: new Date(),
-        fileLine: null,
-        fileName: null
-      }]
-      
+
+      const entries: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'test',
+          payload: { proxy },
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+
       // This should not throw, but handle the error gracefully
       expect(() => excludeRecursiveReference(entries)).toThrow()
     })
@@ -274,19 +295,24 @@ describe('exclude-recursive-reference edge cases', () => {
   describe('edge case objects', () => {
     it('should handle objects with null prototype', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const obj = Object.create(null) as { name: string; data: { nested: boolean } }
+      const obj = Object.create(null) as {
+        name: string
+        data: { nested: boolean }
+      }
       obj.name = 'no-proto'
       obj.data = { nested: true }
-      
-      const entries: LogRecord[] = [{
-        severity: 'INFO',
-        message: 'test',
-        payload: obj,
-        time: new Date(),
-        fileLine: null,
-        fileName: null
-      }]
-      
+
+      const entries: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'test',
+          payload: obj,
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+
       const result = excludeRecursiveReference(entries)
       expect(result[0]?.payload).toStrictEqual({
         name: 'no-proto',
@@ -307,7 +333,7 @@ describe('exclude-recursive-reference edge cases', () => {
           }
         }
       }
-      
+
       const obj: DeepNested = {
         level1: {
           level2: {
@@ -319,16 +345,18 @@ describe('exclude-recursive-reference edge cases', () => {
       }
       obj.level1.level2.level3.level4.backToRoot = obj
       obj.level1.level2.backToLevel1 = obj.level1
-      
-      const entries: LogRecord[] = [{
-        severity: 'INFO',
-        message: 'test',
-        payload: obj,
-        time: new Date(),
-        fileLine: null,
-        fileName: null
-      }]
-      
+
+      const entries: LogRecord[] = [
+        {
+          severity: 'INFO',
+          message: 'test',
+          payload: obj,
+          time: new Date(),
+          fileLine: null,
+          fileName: null
+        }
+      ]
+
       const result = excludeRecursiveReference(entries)
       expect(result[0]?.payload).toStrictEqual({
         level1: {

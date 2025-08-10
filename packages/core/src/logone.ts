@@ -36,12 +36,12 @@ export class Logone {
       elapsedUnit: this.config.elapsedUnit
     })
     const stacker = new Stacker()
-    
+
     // Create logger with onEntry callback
     const logger = new Logger(timer, stacker, {
       onEntry: (entry: LogRecord) => {
         // Notify all subscribers
-        this.listeners.forEach(listener => {
+        this.listeners.forEach((listener) => {
           try {
             listener(entry)
           } catch (error) {
@@ -49,7 +49,7 @@ export class Logone {
             console.error('Error in log entry listener:', error)
           }
         })
-        
+
         // Also notify streaming adapter if available
         const streamingAdapter = this.adapter as StreamingAdapter
         if (streamingAdapter.onEntry) {
@@ -117,7 +117,7 @@ export class Logone {
 
   subscribe(listener: (entry: LogRecord) => void): () => void {
     this.listeners.add(listener)
-    
+
     // Return unsubscribe function
     return () => {
       this.listeners.delete(listener)

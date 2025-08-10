@@ -1,5 +1,11 @@
 # @logone/adapter-node
 
+## 1.1.0
+
+### Minor Changes
+
+- Minor version bump for all packages
+
 ## 1.0.1
 
 ### Patch Changes

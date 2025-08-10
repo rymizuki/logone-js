@@ -25,7 +25,7 @@ function createExcludeRecursive() {
     }
     if (payload instanceof Date) return payload
     if (typeof payload === 'bigint') return payload
-    
+
     // Check if object has toJSON method that returns self
     if ('toJSON' in payload && typeof payload.toJSON === 'function') {
       try {
@@ -37,7 +37,7 @@ function createExcludeRecursive() {
         // Ignore errors from toJSON
       }
     }
-    
+
     return Object.keys(payload).reduce((prev, prop) => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
