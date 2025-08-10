@@ -7,7 +7,8 @@ import {
   LoggerAdapter,
   LoggerConfig,
   LoggerContext,
-  LoggerSeverity
+  LoggerSeverity,
+  StreamingAdapter
 } from './interface'
 import { Logger } from './logger'
 import { severities } from './severity'
@@ -16,6 +17,7 @@ import { Timer } from './timer'
 
 export class Logone {
   private config: LoggerConfig
+  private listeners = new Set<(entry: LogRecord) => void>()
 
   constructor(
     private adapter: LoggerAdapter,
@@ -34,7 +36,31 @@ export class Logone {
       elapsedUnit: this.config.elapsedUnit
     })
     const stacker = new Stacker()
-    const logger = new Logger(timer, stacker)
+    
+    // Create logger with onEntry callback
+    const logger = new Logger(timer, stacker, {
+      onEntry: (entry: LogRecord) => {
+        // Notify all subscribers
+        this.listeners.forEach(listener => {
+          try {
+            listener(entry)
+          } catch (error) {
+            // Ignore errors in listeners to prevent disruption
+            console.error('Error in log entry listener:', error)
+          }
+        })
+        
+        // Also notify streaming adapter if available
+        const streamingAdapter = this.adapter as StreamingAdapter
+        if (streamingAdapter.onEntry) {
+          try {
+            streamingAdapter.onEntry(entry, this.config)
+          } catch (error) {
+            console.error('Error in streaming adapter onEntry:', error)
+          }
+        }
+      }
+    })
 
     timer.start()
 
@@ -87,5 +113,14 @@ export class Logone {
       throw new Error('Logger has no entry by based on severity')
     }
     return severity
+  }
+
+  subscribe(listener: (entry: LogRecord) => void): () => void {
+    this.listeners.add(listener)
+    
+    // Return unsubscribe function
+    return () => {
+      this.listeners.delete(listener)
+    }
   }
 }

@@ -5,7 +5,10 @@ import { Timer } from './timer'
 export class Logger {
   constructor(
     private timer: Timer,
-    private stacker: Stacker
+    private stacker: Stacker,
+    private options?: {
+      onEntry?: (entry: LogRecord) => void
+    }
   ) {}
 
   debug(message: string, ...args: unknown[]) {
@@ -45,6 +48,11 @@ export class Logger {
     }
 
     this.stacker.stack(entry)
+    
+    // Notify via callback if provided
+    if (this.options?.onEntry) {
+      this.options.onEntry(entry)
+    }
   }
 
   private getCallerPosition(): [string | null, number | null, string | null] {
