@@ -197,13 +197,127 @@ describe('Logger', () => {
       })
     })
   })
+  describe('.error with Error object', () => {
+    describe('Error instance as first argument', () => {
+      it('should use error.message as message and {error} as payload', () => {
+        const error = new Error('Test error message')
+        error.cause = 'Test cause'
+        v.get('logger')?.error(error)
+        expect(v.get('stacker')?.entries).toStrictEqual([
+          {
+            fileLine: expect.any(Number) as number,
+            fileName: __filename,
+            funcName: null,
+            message: 'Test error message',
+            payload: { error },
+            severity: 'ERROR',
+            time: v.get('timer')?.currentTime
+          }
+        ])
+      })
+    })
+
+    describe('Error with additional arguments', () => {
+      it('should include additional arguments in payload', () => {
+        const error = new Error('Test error message')
+        v.get('logger')?.error(error, 'additional', { extra: 'data' })
+        expect(v.get('stacker')?.entries).toStrictEqual([
+          {
+            fileLine: expect.any(Number) as number,
+            fileName: __filename,
+            funcName: null,
+            message: 'Test error message',
+            payload: [{ error }, 'additional', { extra: 'data' }],
+            severity: 'ERROR',
+            time: v.get('timer')?.currentTime
+          }
+        ])
+      })
+    })
+
+    describe('Non-Error object as first argument', () => {
+      it('should convert to string and use as message', () => {
+        const notAnError = { message: 'fake error' }
+        v.get('logger')?.error(notAnError)
+        expect(v.get('stacker')?.entries).toStrictEqual([
+          {
+            fileLine: expect.any(Number) as number,
+            fileName: __filename,
+            funcName: null,
+            message: '[object Object]',
+            payload: [],
+            severity: 'ERROR',
+            time: v.get('timer')?.currentTime
+          }
+        ])
+      })
+    })
+  })
+
+  describe('.critical with Error object', () => {
+    describe('Error instance as first argument', () => {
+      it('should use error.message as message and {error} as payload', () => {
+        const error = new Error('Critical error message')
+        error.cause = 'Critical cause'
+        v.get('logger')?.critical(error)
+        expect(v.get('stacker')?.entries).toStrictEqual([
+          {
+            fileLine: expect.any(Number) as number,
+            fileName: __filename,
+            funcName: null,
+            message: 'Critical error message',
+            payload: { error },
+            severity: 'CRITICAL',
+            time: v.get('timer')?.currentTime
+          }
+        ])
+      })
+    })
+
+    describe('Error with additional arguments', () => {
+      it('should include additional arguments in payload', () => {
+        const error = new Error('Critical error message')
+        v.get('logger')?.critical(error, 'context', { level: 'high' })
+        expect(v.get('stacker')?.entries).toStrictEqual([
+          {
+            fileLine: expect.any(Number) as number,
+            fileName: __filename,
+            funcName: null,
+            message: 'Critical error message',
+            payload: [{ error }, 'context', { level: 'high' }],
+            severity: 'CRITICAL',
+            time: v.get('timer')?.currentTime
+          }
+        ])
+      })
+    })
+
+    describe('Non-Error object as first argument', () => {
+      it('should convert to string and use as message', () => {
+        const notAnError = { level: 'critical' }
+        v.get('logger')?.critical(notAnError)
+        expect(v.get('stacker')?.entries).toStrictEqual([
+          {
+            fileLine: expect.any(Number) as number,
+            fileName: __filename,
+            funcName: null,
+            message: '[object Object]',
+            payload: [],
+            severity: 'CRITICAL',
+            time: v.get('timer')?.currentTime
+          }
+        ])
+      })
+    })
+  })
+
   describe('.record', () => {
     describe('message only', () => {
       it('should be stack record', () => {
         v.get('logger')?.record('DEBUG', 'hello')
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 203,
+            fileLine: 317,
             fileName: __filename,
             funcName: null,
             message: 'hello',

@@ -20,11 +20,23 @@ export class Logger {
   warning(message: string, ...args: unknown[]) {
     this.addEntry('WARNING', message, ...args)
   }
-  error(message: string, ...args: unknown[]) {
-    this.addEntry('ERROR', message, ...args)
+  error(message: string | Error, ...args: unknown[]) {
+    if (message instanceof Error) {
+      // If first argument is Error object, use error.message as message and {error} as payload
+      this.addEntry('ERROR', message.message, { error: message }, ...args)
+    } else {
+      // Otherwise, convert to string and use as message
+      this.addEntry('ERROR', String(message), ...args)
+    }
   }
-  critical(message: string, ...args: unknown[]) {
-    this.addEntry('CRITICAL', message, ...args)
+  critical(message: string | Error, ...args: unknown[]) {
+    if (message instanceof Error) {
+      // If first argument is Error object, use error.message as message and {error} as payload
+      this.addEntry('CRITICAL', message.message, { error: message }, ...args)
+    } else {
+      // Otherwise, convert to string and use as message
+      this.addEntry('CRITICAL', String(message), ...args)
+    }
   }
   record(severity: LoggerSeverity, message: string) {
     this.addEntry(severity, message)
