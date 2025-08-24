@@ -51,7 +51,8 @@ const entries: LogRecord[] = [
     },
     time: new Date(),
     fileLine: null,
-    fileName: null
+    fileName: null,
+    funcName: null
   }
 ]
 
@@ -106,13 +107,17 @@ describe('exclude recursive reference', () => {
           },
           time: entries[0]?.time,
           fileLine: null,
-          fileName: null
+          fileName: null,
+          funcName: null
         }
       ])
     })
   })
 
   describe('Error object handling', () => {
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
     it('should properly serialize Error objects', () => {
       const error = new Error('Test error message')
       error.cause = 'Test cause'
@@ -130,10 +135,10 @@ describe('exclude recursive reference', () => {
       
       const result = convertObjectToString(errorEntries)
       
-      expect(result[0].payload).toHaveProperty('name', 'Error')
-      expect(result[0].payload).toHaveProperty('message', 'Test error message')
-      expect(result[0].payload).toHaveProperty('cause', 'Test cause')
-      expect(result[0].payload).toHaveProperty('stack')
+      expect(result[0]?.payload).toHaveProperty('name', 'Error')
+      expect(result[0]?.payload).toHaveProperty('message', 'Test error message')
+      expect(result[0]?.payload).toHaveProperty('cause', 'Test cause')
+      expect(result[0]?.payload).toHaveProperty('stack')
     })
 
     it('should properly serialize nested Error objects', () => {
@@ -158,10 +163,10 @@ describe('exclude recursive reference', () => {
       
       const result = convertObjectToString(errorEntries)
       
-      expect(result[0].payload.mainError).toHaveProperty('name', 'Error')
-      expect(result[0].payload.mainError).toHaveProperty('message', 'Main error')
-      expect(result[0].payload.nested.error).toHaveProperty('name', 'Error')
-      expect(result[0].payload.nested.error).toHaveProperty('message', 'Nested error')
+      expect(result[0]?.payload?.mainError).toHaveProperty('name', 'Error')
+      expect(result[0]?.payload?.mainError).toHaveProperty('message', 'Main error')
+      expect((result[0]?.payload?.nested as any)?.error).toHaveProperty('name', 'Error')
+      expect((result[0]?.payload?.nested as any)?.error).toHaveProperty('message', 'Nested error')
     })
 
     it('should handle Error with nested Error in cause', () => {
@@ -182,10 +187,10 @@ describe('exclude recursive reference', () => {
       
       const result = convertObjectToString(errorEntries)
       
-      expect(result[0].payload).toHaveProperty('name', 'Error')
-      expect(result[0].payload).toHaveProperty('message', 'Main error')
-      expect(result[0].payload.cause).toHaveProperty('name', 'Error')
-      expect(result[0].payload.cause).toHaveProperty('message', 'Cause error')
+      expect(result[0]?.payload).toHaveProperty('name', 'Error')
+      expect(result[0]?.payload).toHaveProperty('message', 'Main error')
+      expect((result[0]?.payload as any)?.cause).toHaveProperty('name', 'Error')
+      expect((result[0]?.payload as any)?.cause).toHaveProperty('message', 'Cause error')
     })
   })
 })
