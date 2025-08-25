@@ -46,7 +46,21 @@ function createProcessor() {
       }
       const { check, replace } = replacer[type]
       if (check(payload)) {
-        return replace(payload as any)
+        const replaced = replace(payload as any)
+        // For error objects, we need to recursively process the replacement
+        // to handle nested errors in cause, etc.
+        if (type === 'error' && typeof replaced === 'object') {
+          // Create a new object with all properties from the replacement
+          const result: any = {}
+          // Use for...in to get all properties including non-enumerable ones from the replacement object
+          for (const prop in replaced) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            result[prop] = recursive(replaced[prop])
+          }
+          return result
+        }
+        return replaced
       }
     }
     if (typeof payload !== 'object') return payload
