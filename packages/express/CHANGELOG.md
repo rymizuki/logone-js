@@ -1,6 +1,14 @@
 # @logone/express
 
-## 2.0.0
+## 1.1.1
+
+### Patch Changes
+
+- fix: preserve Error object properties during serialization #18
+- Updated dependencies
+  - @logone/core@1.1.1
+
+## 1.1.0
 
 ### Minor Changes
 

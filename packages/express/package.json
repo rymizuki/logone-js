@@ -1,7 +1,7 @@
 {
   "name": "@logone/express",
   "private": false,
-  "version": "2.0.0",
+  "version": "1.1.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
@@ -11,8 +11,8 @@
     "format": "prettier -w './**/*.{ts,tsx,js,json,css}' --check"
   },
   "devDependencies": {
-    "@logone/adapter-node": "1.1.0",
-    "@logone/core": "1.1.0",
+    "@logone/adapter-node": "1.1.1",
+    "@logone/core": "1.1.1",
     "@logone/dev-config": "*",
     "@logone/test-helper": "*",
     "@types/express": "^4.17.21",
@@ -22,7 +22,7 @@
     "vitest": "^1.0.4"
   },
   "peerDependencies": {
-    "@logone/core": ">=1.1.0"
+    "@logone/core": ">=1.1.1"
   },
   "files": [
     "build/index.js",
