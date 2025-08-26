@@ -26,7 +26,9 @@ export class Logger {
       this.addEntry('ERROR', message.message, { error: message }, ...args)
     } else {
       // Otherwise, convert to string and use as message
-      this.addEntry('ERROR', String(message), ...args)
+      // Handle null and undefined explicitly to prevent conversion errors
+      const messageStr = message == null ? (message === null ? 'null' : 'undefined') : String(message)
+      this.addEntry('ERROR', messageStr, ...args)
     }
   }
   critical(message: string | Error, ...args: unknown[]) {
@@ -35,7 +37,9 @@ export class Logger {
       this.addEntry('CRITICAL', message.message, { error: message }, ...args)
     } else {
       // Otherwise, convert to string and use as message
-      this.addEntry('CRITICAL', String(message), ...args)
+      // Handle null and undefined explicitly to prevent conversion errors
+      const messageStr = message == null ? (message === null ? 'null' : 'undefined') : String(message)
+      this.addEntry('CRITICAL', messageStr, ...args)
     }
   }
   record(severity: LoggerSeverity, message: string) {

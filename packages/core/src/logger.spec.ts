@@ -311,13 +311,89 @@ describe('Logger', () => {
     })
   })
 
+  describe('.error with null/undefined', () => {
+    describe('null as first argument', () => {
+      it('should convert null to "null" string', () => {
+        // @ts-expect-error - intentionally passing null to test error handling
+        v.get('logger')?.error(null)
+        expect(v.get('stacker')?.entries).toStrictEqual([
+          {
+            fileLine: expect.any(Number) as number,
+            fileName: __filename,
+            funcName: null,
+            message: 'null',
+            payload: [],
+            severity: 'ERROR',
+            time: v.get('timer')?.currentTime
+          }
+        ])
+      })
+    })
+
+    describe('undefined as first argument', () => {
+      it('should convert undefined to "undefined" string', () => {
+        // @ts-expect-error - intentionally passing undefined to test error handling
+        v.get('logger')?.error(undefined)
+        expect(v.get('stacker')?.entries).toStrictEqual([
+          {
+            fileLine: expect.any(Number) as number,
+            fileName: __filename,
+            funcName: null,
+            message: 'undefined',
+            payload: [],
+            severity: 'ERROR',
+            time: v.get('timer')?.currentTime
+          }
+        ])
+      })
+    })
+  })
+
+  describe('.critical with null/undefined', () => {
+    describe('null as first argument', () => {
+      it('should convert null to "null" string', () => {
+        // @ts-expect-error - intentionally passing null to test error handling
+        v.get('logger')?.critical(null)
+        expect(v.get('stacker')?.entries).toStrictEqual([
+          {
+            fileLine: expect.any(Number) as number,
+            fileName: __filename,
+            funcName: null,
+            message: 'null',
+            payload: [],
+            severity: 'CRITICAL',
+            time: v.get('timer')?.currentTime
+          }
+        ])
+      })
+    })
+
+    describe('undefined as first argument', () => {
+      it('should convert undefined to "undefined" string', () => {
+        // @ts-expect-error - intentionally passing undefined to test error handling
+        v.get('logger')?.critical(undefined)
+        expect(v.get('stacker')?.entries).toStrictEqual([
+          {
+            fileLine: expect.any(Number) as number,
+            fileName: __filename,
+            funcName: null,
+            message: 'undefined',
+            payload: [],
+            severity: 'CRITICAL',
+            time: v.get('timer')?.currentTime
+          }
+        ])
+      })
+    })
+  })
+
   describe('.record', () => {
     describe('message only', () => {
       it('should be stack record', () => {
         v.get('logger')?.record('DEBUG', 'hello')
         expect(v.get('stacker')?.entries).toStrictEqual([
           {
-            fileLine: 317,
+            fileLine: 393,
             fileName: __filename,
             funcName: null,
             message: 'hello',
