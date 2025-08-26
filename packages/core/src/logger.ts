@@ -27,7 +27,12 @@ export class Logger {
     } else {
       // Otherwise, convert to string and use as message
       // Handle null and undefined explicitly to prevent conversion errors
-      const messageStr = message == null ? (message === null ? 'null' : 'undefined') : String(message)
+      const messageStr =
+        message == null
+          ? message === null
+            ? 'null'
+            : 'undefined'
+          : String(message)
       this.addEntry('ERROR', messageStr, ...args)
     }
   }
@@ -38,7 +43,12 @@ export class Logger {
     } else {
       // Otherwise, convert to string and use as message
       // Handle null and undefined explicitly to prevent conversion errors
-      const messageStr = message == null ? (message === null ? 'null' : 'undefined') : String(message)
+      const messageStr =
+        message == null
+          ? message === null
+            ? 'null'
+            : 'undefined'
+          : String(message)
       this.addEntry('CRITICAL', messageStr, ...args)
     }
   }

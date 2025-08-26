@@ -1,5 +1,11 @@
 # @logone/core
 
+## 1.1.2
+
+### Patch Changes
+
+- fix bugs
+
 ## 1.1.1
 
 ### Patch Changes

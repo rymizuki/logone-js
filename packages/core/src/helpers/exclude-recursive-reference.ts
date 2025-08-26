@@ -38,7 +38,8 @@ function createExcludeRecursive() {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           const value = payload[prop]
-          prev[prop] = typeof value === 'object' ? excludeRecursive(value) : value
+          prev[prop] =
+            typeof value === 'object' ? excludeRecursive(value) : value
           return prev
         }, {} as any)
       }
