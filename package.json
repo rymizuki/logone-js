@@ -8,7 +8,7 @@
     "format": "turbo run format",
     "test": "turbo run test",
     "changeset": "changeset",
-    "version": "npm run format && npm run lint && changeset version",
+    "version": "npm run format && npm run lint && changeset version && npm install",
     "publish": "changeset publish"
   },
   "devDependencies": {
