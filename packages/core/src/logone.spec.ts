@@ -255,4 +255,36 @@ describe('Logone', () => {
       expect(v.get('adapter')?.outputs[0]?.runtime.lines).length(2)
     })
   })
+
+  describe('multiple adapters', () => {
+    beforeEach(() => {
+      const adapter1 = new FakeAdapter()
+      const adapter2 = new FakeAdapter()
+      v.set('adapter', adapter1)
+      v.set('adapter2', adapter2)
+      v.set('logone', new Logone([adapter1, adapter2]))
+
+      const { logger, finish } = v.get('logone')!.start('test', {
+        case: 'multiple adapters'
+      })
+
+      timer.after(1000)
+      logger.info('example message')
+
+      timer.after(1000)
+      finish()
+    })
+
+    it('should output to all adapters', () => {
+      const adapter1 = v.get('adapter')
+      const adapter2 = v.get('adapter2') as FakeAdapter
+      
+      expect(adapter1?.outputs).toHaveLength(1)
+      expect(adapter2.outputs).toHaveLength(1)
+      expect(adapter1?.outputs[0]?.type).toBe('test')
+      expect(adapter2.outputs[0]?.type).toBe('test')
+      expect(adapter1?.outputs[0]?.runtime.lines[0]?.message).toBe('example message')
+      expect(adapter2.outputs[0]?.runtime.lines[0]?.message).toBe('example message')
+    })
+  })
 })

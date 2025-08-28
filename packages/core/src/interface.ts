@@ -61,3 +61,5 @@ export interface LoggerAdapter {
 export interface StreamingAdapter extends LoggerAdapter {
   onEntry?(entry: LogRecord, config: LogoneConfig): void
 }
+
+export type LoggerAdapterInput = LoggerAdapter | LoggerAdapter[]
