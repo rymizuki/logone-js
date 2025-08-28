@@ -17,8 +17,10 @@
     "file",
     "adapter"
   ],
+  "dependencies": {
+    "@logone/core": "1.1.2"
+  },
   "devDependencies": {
-    "@logone/core": "1.1.2",
     "@logone/dev-config": "*",
     "@logone/test-helper": "*",
     "@types/node": "^20.10.4",

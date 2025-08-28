@@ -1,6 +1,6 @@
 import { LoggerAdapter, LoggerRecord } from '@logone/core'
 import { mkdirSync, writeFileSync, appendFileSync, existsSync, statSync } from 'fs'
-import { dirname, resolve } from 'path'
+import { dirname, resolve, basename, extname } from 'path'
 
 type RotationFrequency = 'daily' | 'hourly' | 'minutely'
 
@@ -14,21 +14,32 @@ interface FileAdapterOptions {
   timestampFormat?: string
 }
 
+interface InternalFileAdapterOptions {
+  filepath: string
+  maxFileSize: number
+  rotateFileCount: number
+  append: boolean
+  encoding: BufferEncoding
+  rotationFrequency?: RotationFrequency
+  timestampFormat: string
+}
+
 export class FileAdapter implements LoggerAdapter {
   private fileIndex = 0
   private lastRotationTime?: Date
-  private readonly options: Required<FileAdapterOptions>
+  private readonly options: InternalFileAdapterOptions
 
   constructor(options: FileAdapterOptions) {
+    this.validateOptions(options)
     this.options = {
       filepath: options.filepath,
       maxFileSize: options.maxFileSize ?? Infinity,
       rotateFileCount: options.rotateFileCount ?? 5,
       append: options.append ?? true,
       encoding: options.encoding ?? 'utf-8',
-      rotationFrequency: options.rotationFrequency ?? undefined,
+      rotationFrequency: options.rotationFrequency,
       timestampFormat: options.timestampFormat ?? 'YYYY-MM-DD'
-    } as Required<FileAdapterOptions>
+    }
     this.initializeFile()
   }
 
@@ -47,17 +58,42 @@ export class FileAdapter implements LoggerAdapter {
     return `${JSON.stringify(record)}\n`
   }
 
-  private write(content: string): void {
-    const filepath = this.getCurrentFilePath()
-    const dir = dirname(filepath)
-    
-    mkdirSync(dir, { recursive: true })
-    
-    if (this.options.append && existsSync(filepath)) {
-      appendFileSync(filepath, content, { encoding: this.options.encoding })
-    } else {
-      writeFileSync(filepath, content, { encoding: this.options.encoding })
+  private validateOptions(options: FileAdapterOptions): void {
+    if (!options.filepath?.trim()) {
+      throw new Error('filepath is required')
     }
+    
+    if (options.maxFileSize !== undefined && options.maxFileSize <= 0) {
+      throw new Error('maxFileSize must be greater than 0')
+    }
+    
+    if (options.rotateFileCount !== undefined && options.rotateFileCount <= 0) {
+      throw new Error('rotateFileCount must be greater than 0')
+    }
+  }
+
+  private write(content: string): void {
+    try {
+      const filepath = this.getCurrentFilePath()
+      const dir = dirname(filepath)
+      
+      mkdirSync(dir, { recursive: true })
+      
+      if (this.options.append && existsSync(filepath)) {
+        appendFileSync(filepath, content, { encoding: this.options.encoding })
+      } else {
+        writeFileSync(filepath, content, { encoding: this.options.encoding })
+      }
+    } catch (error) {
+      console.error(`Failed to write log to file: ${error instanceof Error ? error.message : String(error)}`)
+    }
+  }
+
+  private getFilenameComponents(filepath: string): { name: string, ext: string } {
+    const filename = basename(filepath)
+    const ext = extname(filename).slice(1) || 'log'
+    const name = basename(filename, '.' + ext)
+    return { name, ext }
   }
 
   private shouldRotate(nextContentSize: number): boolean {
@@ -131,20 +167,15 @@ export class FileAdapter implements LoggerAdapter {
     if (this.fileIndex === 0) {
       return resolve(this.options.filepath)
     }
+    
     const dir = dirname(this.options.filepath)
-    const filename = this.options.filepath.split('/').pop() ?? 'logone.log'
-    const [name, ext] = filename.includes('.') 
-      ? filename.split(/\.(?=[^.]+$)/) 
-      : [filename, 'log']
+    const { name, ext } = this.getFilenameComponents(this.options.filepath)
     return resolve(dir, `${name}.${this.fileIndex}.${ext}`)
   }
 
   private getTimeBasedFilePath(): string {
     const dir = dirname(this.options.filepath)
-    const filename = this.options.filepath.split('/').pop() ?? 'logone.log'
-    const [name, ext] = filename.includes('.') 
-      ? filename.split(/\.(?=[^.]+$)/) 
-      : [filename, 'log']
+    const { name, ext } = this.getFilenameComponents(this.options.filepath)
     
     const timestamp = this.formatTimestamp(new Date())
     return resolve(dir, `${name}.${timestamp}.${ext}`)
