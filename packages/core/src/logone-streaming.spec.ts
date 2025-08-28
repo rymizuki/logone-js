@@ -192,7 +192,7 @@ describe('Logone Streaming Support', () => {
     it('should support multiple streaming adapters', () => {
       const onEntryMock1 = vi.fn()
       const onEntryMock2 = vi.fn()
-      
+
       const streamingAdapter1: StreamingAdapter = {
         output: vi.fn(),
         onEntry: onEntryMock1

@@ -278,13 +278,17 @@ describe('Logone', () => {
     it('should output to all adapters', () => {
       const adapter1 = v.get('adapter')
       const adapter2 = v.get('adapter2') as FakeAdapter
-      
+
       expect(adapter1?.outputs).toHaveLength(1)
       expect(adapter2.outputs).toHaveLength(1)
       expect(adapter1?.outputs[0]?.type).toBe('test')
       expect(adapter2.outputs[0]?.type).toBe('test')
-      expect(adapter1?.outputs[0]?.runtime.lines[0]?.message).toBe('example message')
-      expect(adapter2.outputs[0]?.runtime.lines[0]?.message).toBe('example message')
+      expect(adapter1?.outputs[0]?.runtime.lines[0]?.message).toBe(
+        'example message'
+      )
+      expect(adapter2.outputs[0]?.runtime.lines[0]?.message).toBe(
+        'example message'
+      )
     })
   })
 })

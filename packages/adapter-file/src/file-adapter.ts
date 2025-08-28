@@ -1,5 +1,11 @@
 import { LoggerAdapter, LoggerRecord } from '@logone/core'
-import { mkdirSync, writeFileSync, appendFileSync, existsSync, statSync } from 'fs'
+import {
+  mkdirSync,
+  writeFileSync,
+  appendFileSync,
+  existsSync,
+  statSync
+} from 'fs'
 import { dirname, resolve, basename, extname } from 'path'
 
 type RotationFrequency = 'daily' | 'hourly' | 'minutely'
@@ -62,11 +68,11 @@ export class FileAdapter implements LoggerAdapter {
     if (!options.filepath?.trim()) {
       throw new Error('filepath is required')
     }
-    
+
     if (options.maxFileSize !== undefined && options.maxFileSize <= 0) {
       throw new Error('maxFileSize must be greater than 0')
     }
-    
+
     if (options.rotateFileCount !== undefined && options.rotateFileCount <= 0) {
       throw new Error('rotateFileCount must be greater than 0')
     }
@@ -76,20 +82,25 @@ export class FileAdapter implements LoggerAdapter {
     try {
       const filepath = this.getCurrentFilePath()
       const dir = dirname(filepath)
-      
+
       mkdirSync(dir, { recursive: true })
-      
+
       if (this.options.append && existsSync(filepath)) {
         appendFileSync(filepath, content, { encoding: this.options.encoding })
       } else {
         writeFileSync(filepath, content, { encoding: this.options.encoding })
       }
     } catch (error) {
-      console.error(`Failed to write log to file: ${error instanceof Error ? error.message : String(error)}`)
+      console.error(
+        `Failed to write log to file: ${error instanceof Error ? error.message : String(error)}`
+      )
     }
   }
 
-  private getFilenameComponents(filepath: string): { name: string, ext: string } {
+  private getFilenameComponents(filepath: string): {
+    name: string
+    ext: string
+  } {
     const filename = basename(filepath)
     const ext = extname(filename).slice(1) || 'log'
     const name = basename(filename, '.' + ext)
@@ -101,42 +112,48 @@ export class FileAdapter implements LoggerAdapter {
     if (this.options.rotationFrequency && this.shouldRotateByTime()) {
       return true
     }
-    
+
     // サイズベースローテーションのチェック
     if (this.options.maxFileSize === Infinity) {
       return false
     }
-    
+
     const filepath = this.getCurrentFilePath()
     let currentSize = 0
-    
+
     if (existsSync(filepath)) {
       currentSize = statSync(filepath).size
     }
-    
+
     return currentSize + nextContentSize > this.options.maxFileSize
   }
 
   private shouldRotateByTime(): boolean {
     const now = new Date()
-    
+
     if (!this.lastRotationTime) {
       this.lastRotationTime = now
       return false
     }
-    
+
     switch (this.options.rotationFrequency) {
       case 'minutely':
-        return now.getMinutes() !== this.lastRotationTime.getMinutes() ||
-               now.getHours() !== this.lastRotationTime.getHours() ||
-               now.getDate() !== this.lastRotationTime.getDate()
+        return (
+          now.getMinutes() !== this.lastRotationTime.getMinutes() ||
+          now.getHours() !== this.lastRotationTime.getHours() ||
+          now.getDate() !== this.lastRotationTime.getDate()
+        )
       case 'hourly':
-        return now.getHours() !== this.lastRotationTime.getHours() ||
-               now.getDate() !== this.lastRotationTime.getDate()
+        return (
+          now.getHours() !== this.lastRotationTime.getHours() ||
+          now.getDate() !== this.lastRotationTime.getDate()
+        )
       case 'daily':
-        return now.getDate() !== this.lastRotationTime.getDate() ||
-               now.getMonth() !== this.lastRotationTime.getMonth() ||
-               now.getFullYear() !== this.lastRotationTime.getFullYear()
+        return (
+          now.getDate() !== this.lastRotationTime.getDate() ||
+          now.getMonth() !== this.lastRotationTime.getMonth() ||
+          now.getFullYear() !== this.lastRotationTime.getFullYear()
+        )
       default:
         return false
     }
@@ -155,7 +172,7 @@ export class FileAdapter implements LoggerAdapter {
   private initializeFile(): void {
     const filepath = this.getCurrentFilePath()
     const dir = dirname(filepath)
-    
+
     mkdirSync(dir, { recursive: true })
   }
 
@@ -163,11 +180,11 @@ export class FileAdapter implements LoggerAdapter {
     if (this.options.rotationFrequency) {
       return this.getTimeBasedFilePath()
     }
-    
+
     if (this.fileIndex === 0) {
       return resolve(this.options.filepath)
     }
-    
+
     const dir = dirname(this.options.filepath)
     const { name, ext } = this.getFilenameComponents(this.options.filepath)
     return resolve(dir, `${name}.${this.fileIndex}.${ext}`)
@@ -176,14 +193,14 @@ export class FileAdapter implements LoggerAdapter {
   private getTimeBasedFilePath(): string {
     const dir = dirname(this.options.filepath)
     const { name, ext } = this.getFilenameComponents(this.options.filepath)
-    
+
     const timestamp = this.formatTimestamp(new Date())
     return resolve(dir, `${name}.${timestamp}.${ext}`)
   }
 
   private formatTimestamp(date: Date): string {
     const format = this.options.timestampFormat
-    
+
     // シンプルな置換ベースの実装
     return format
       .replace('YYYY', date.getFullYear().toString())
