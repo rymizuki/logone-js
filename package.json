@@ -9,7 +9,9 @@
     "test": "turbo run test",
     "changeset": "changeset",
     "version": "npm run format && npm run lint && changeset version && npm install",
-    "publish": "changeset publish"
+    "publish": "npm run verify-publish && changeset publish",
+    "verify-publish": "node scripts/verify-publish.js",
+    "publish:force": "changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
