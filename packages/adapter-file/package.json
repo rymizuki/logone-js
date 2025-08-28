@@ -1,7 +1,7 @@
 {
   "name": "@logone/adapter-file",
   "private": false,
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "File adapter for Logone",
   "main": "build/index.js",
   "types": "build/index.d.ts",
