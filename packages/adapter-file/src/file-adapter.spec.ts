@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { FileAdapter, createAdapter } from './file-adapter'
-import { LoggerRecord } from './types'
+import { LoggerRecord } from '@logone/core'
 import { readFileSync, existsSync, rmSync } from 'fs'
 import { resolve } from 'path'
 

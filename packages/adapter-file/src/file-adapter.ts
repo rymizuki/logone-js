@@ -1,4 +1,4 @@
-import { LoggerAdapter, LoggerRecord } from './types'
+import { LoggerAdapter, LoggerRecord } from '@logone/core'
 import { mkdirSync, writeFileSync, appendFileSync, existsSync, statSync } from 'fs'
 import { dirname, resolve } from 'path'
 
