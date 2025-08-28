@@ -1,0 +1,26 @@
+{
+  "name": "@logone/adapter-file",
+  "version": "1.0.0",
+  "description": "File adapter for Logone",
+  "main": "./src/index.ts",
+  "scripts": {
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
+  },
+  "keywords": [
+    "logone",
+    "logger",
+    "file",
+    "adapter"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@logone/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@logone/test-helper": "workspace:*",
+    "@types/node": "^20.0.0",
+    "vitest": "^1.0.0"
+  }
+}
