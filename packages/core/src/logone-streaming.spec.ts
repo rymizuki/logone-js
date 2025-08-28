@@ -156,7 +156,7 @@ describe('Logone Streaming Support', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Error in streaming adapter onEntry:',
-        expect.any(Error)
+        'Adapter error'
       )
 
       finish()
@@ -187,6 +187,49 @@ describe('Logone Streaming Support', () => {
       expect(subscriberEntries[0]).toEqual(adapterEntries[0])
 
       finish()
+    })
+
+    it('should support multiple streaming adapters', () => {
+      const onEntryMock1 = vi.fn()
+      const onEntryMock2 = vi.fn()
+      
+      const streamingAdapter1: StreamingAdapter = {
+        output: vi.fn(),
+        onEntry: onEntryMock1
+      }
+
+      const streamingAdapter2: StreamingAdapter = {
+        output: vi.fn(),
+        onEntry: onEntryMock2
+      }
+
+      const logone = new Logone([streamingAdapter1, streamingAdapter2])
+      const { logger, finish } = logone.start('test')
+
+      logger.info('Test message')
+
+      expect(onEntryMock1).toHaveBeenCalledTimes(1)
+      expect(onEntryMock2).toHaveBeenCalledTimes(1)
+      expect(onEntryMock1).toHaveBeenCalledWith(
+        expect.objectContaining({
+          severity: 'INFO',
+          message: 'Test message'
+        }),
+        expect.any(Object)
+      )
+      expect(onEntryMock2).toHaveBeenCalledWith(
+        expect.objectContaining({
+          severity: 'INFO',
+          message: 'Test message'
+        }),
+        expect.any(Object)
+      )
+
+      finish()
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(streamingAdapter1.output).toHaveBeenCalled()
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(streamingAdapter2.output).toHaveBeenCalled()
     })
   })
 })

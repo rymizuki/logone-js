@@ -5,6 +5,7 @@ import { maskPayloadSecretParameters } from './helpers/mask-secret-parameters'
 import {
   LogRecord,
   LoggerAdapter,
+  LoggerAdapterInput,
   LoggerConfig,
   LoggerContext,
   LoggerSeverity,
@@ -18,17 +19,27 @@ import { Timer } from './timer'
 export class Logone {
   private config: LoggerConfig
   private listeners = new Set<(entry: LogRecord) => void>()
+  private adapters: LoggerAdapter[]
 
   constructor(
-    private adapter: LoggerAdapter,
+    adapterInput: LoggerAdapterInput,
     config: Partial<LoggerConfig> = {}
   ) {
+    this.adapters = Array.isArray(adapterInput) ? adapterInput : [adapterInput]
     this.config = {
       elapsedUnit: '1ms',
       maskKeywords: [],
       logLevel: 'DEBUG',
       ...config
     }
+  }
+
+  /** @deprecated Use constructor with LoggerAdapterInput instead */
+  private get adapter(): LoggerAdapter {
+    if (this.adapters.length === 0) {
+      throw new Error('No adapters configured')
+    }
+    return this.adapters[0]!
   }
 
   start(type: string, context: LoggerContext = {}) {
@@ -50,15 +61,17 @@ export class Logone {
           }
         })
 
-        // Also notify streaming adapter if available
-        const streamingAdapter = this.adapter as StreamingAdapter
-        if (streamingAdapter.onEntry) {
-          try {
-            streamingAdapter.onEntry(entry, this.config)
-          } catch (error) {
-            console.error('Error in streaming adapter onEntry:', error)
+        // Also notify streaming adapters if available
+        this.adapters.forEach((adapter) => {
+          const streamingAdapter = adapter as StreamingAdapter
+          if (streamingAdapter.onEntry) {
+            try {
+              streamingAdapter.onEntry(entry, this.config)
+            } catch (error) {
+              console.error('Error in streaming adapter onEntry:', error instanceof Error ? error.message : 'Unknown error')
+            }
           }
-        }
+        })
       }
     })
 
@@ -93,7 +106,13 @@ export class Logone {
         config: this.config
       }
 
-      this.adapter.output(record)
+      this.adapters.forEach((adapter) => {
+        try {
+          adapter.output(record)
+        } catch (error) {
+          console.error('Error in adapter output:', error instanceof Error ? error.message : 'Unknown error')
+        }
+      })
     }
 
     return {
