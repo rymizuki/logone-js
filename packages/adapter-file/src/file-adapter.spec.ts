@@ -21,7 +21,7 @@ describe('FileAdapter', () => {
     }
   })
 
-  const createMockRecord = (severity = 'INFO' as any): LoggerRecord => ({
+  const createMockRecord = (severity: 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL' = 'INFO'): LoggerRecord => ({
     type: 'log',
     context: {},
     runtime: {
@@ -68,7 +68,7 @@ describe('FileAdapter', () => {
       adapter.destroy()
       
       const content = readFileSync(testFilePath, 'utf-8')
-      const parsedRecord = JSON.parse(content.trim())
+      const parsedRecord = JSON.parse(content.trim()) as LoggerRecord
       
       expect(parsedRecord).toMatchObject({
         type: 'log',
@@ -89,8 +89,8 @@ describe('FileAdapter', () => {
       const lines = content.trim().split('\n')
       
       expect(lines).toHaveLength(2)
-      expect(JSON.parse(lines[0]!).runtime.severity).toBe('INFO')
-      expect(JSON.parse(lines[1]!).runtime.severity).toBe('ERROR')
+      expect((JSON.parse(lines[0]!) as LoggerRecord).runtime.severity).toBe('INFO')
+      expect((JSON.parse(lines[1]!) as LoggerRecord).runtime.severity).toBe('ERROR')
     })
 
     it('should handle different severities', () => {
@@ -107,7 +107,7 @@ describe('FileAdapter', () => {
       
       expect(lines).toHaveLength(5)
       lines.forEach((line, index) => {
-        expect(JSON.parse(line).runtime.severity).toBe(severities[index])
+        expect((JSON.parse(line) as LoggerRecord).runtime.severity).toBe(severities[index])
       })
     })
   })
