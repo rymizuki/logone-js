@@ -1,6 +1,6 @@
 {
   "name": "@logone/dev-config",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "format": "prettier -w './**/*.{ts,tsx,js,json,css}' --check"
