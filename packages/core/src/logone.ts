@@ -39,7 +39,7 @@ export class Logone {
     if (this.adapters.length === 0) {
       throw new Error('No adapters configured')
     }
-    return this.adapters[0]
+    return this.adapters[0]!
   }
 
   start(type: string, context: LoggerContext = {}) {
