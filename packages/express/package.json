@@ -1,7 +1,7 @@
 {
   "name": "@logone/express",
   "private": false,
-  "version": "2.0.0",
+  "version": "1.2.0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
