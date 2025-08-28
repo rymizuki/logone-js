@@ -156,7 +156,7 @@ describe('Logone Streaming Support', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Error in streaming adapter onEntry:',
-        expect.any(Error)
+        'Adapter error'
       )
 
       finish()
