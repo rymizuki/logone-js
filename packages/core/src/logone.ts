@@ -36,7 +36,10 @@ export class Logone {
 
   /** @deprecated Use constructor with LoggerAdapterInput instead */
   private get adapter(): LoggerAdapter {
-    return this.adapters[0]!
+    if (this.adapters.length === 0) {
+      throw new Error('No adapters configured')
+    }
+    return this.adapters[0]
   }
 
   start(type: string, context: LoggerContext = {}) {
