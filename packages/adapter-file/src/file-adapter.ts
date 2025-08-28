@@ -2,16 +2,21 @@ import { LoggerAdapter, LoggerRecord } from '@logone/core'
 import { mkdirSync, writeFileSync, appendFileSync, existsSync, statSync } from 'fs'
 import { dirname, resolve } from 'path'
 
+type RotationFrequency = 'daily' | 'hourly' | 'minutely'
+
 interface FileAdapterOptions {
   filepath: string
   maxFileSize?: number
   rotateFileCount?: number
   append?: boolean
   encoding?: BufferEncoding
+  rotationFrequency?: RotationFrequency
+  timestampFormat?: string
 }
 
 export class FileAdapter implements LoggerAdapter {
   private fileIndex = 0
+  private lastRotationTime?: Date
   private readonly options: Required<FileAdapterOptions>
 
   constructor(options: FileAdapterOptions) {
@@ -20,8 +25,10 @@ export class FileAdapter implements LoggerAdapter {
       maxFileSize: options.maxFileSize ?? Infinity,
       rotateFileCount: options.rotateFileCount ?? 5,
       append: options.append ?? true,
-      encoding: options.encoding ?? 'utf-8'
-    }
+      encoding: options.encoding ?? 'utf-8',
+      rotationFrequency: options.rotationFrequency ?? undefined,
+      timestampFormat: options.timestampFormat ?? 'YYYY-MM-DD'
+    } as Required<FileAdapterOptions>
     this.initializeFile()
   }
 
@@ -54,6 +61,12 @@ export class FileAdapter implements LoggerAdapter {
   }
 
   private shouldRotate(nextContentSize: number): boolean {
+    // 時間ベースローテーションのチェック
+    if (this.options.rotationFrequency && this.shouldRotateByTime()) {
+      return true
+    }
+    
+    // サイズベースローテーションのチェック
     if (this.options.maxFileSize === Infinity) {
       return false
     }
@@ -68,8 +81,39 @@ export class FileAdapter implements LoggerAdapter {
     return currentSize + nextContentSize > this.options.maxFileSize
   }
 
+  private shouldRotateByTime(): boolean {
+    const now = new Date()
+    
+    if (!this.lastRotationTime) {
+      this.lastRotationTime = now
+      return false
+    }
+    
+    switch (this.options.rotationFrequency) {
+      case 'minutely':
+        return now.getMinutes() !== this.lastRotationTime.getMinutes() ||
+               now.getHours() !== this.lastRotationTime.getHours() ||
+               now.getDate() !== this.lastRotationTime.getDate()
+      case 'hourly':
+        return now.getHours() !== this.lastRotationTime.getHours() ||
+               now.getDate() !== this.lastRotationTime.getDate()
+      case 'daily':
+        return now.getDate() !== this.lastRotationTime.getDate() ||
+               now.getMonth() !== this.lastRotationTime.getMonth() ||
+               now.getFullYear() !== this.lastRotationTime.getFullYear()
+      default:
+        return false
+    }
+  }
+
   private rotateFile(): void {
-    this.fileIndex = (this.fileIndex + 1) % this.options.rotateFileCount
+    if (this.options.rotationFrequency) {
+      // 時間ベースローテーションでは lastRotationTime を更新
+      this.lastRotationTime = new Date()
+    } else {
+      // サイズベースローテーションでは fileIndex を更新
+      this.fileIndex = (this.fileIndex + 1) % this.options.rotateFileCount
+    }
   }
 
   private initializeFile(): void {
@@ -80,6 +124,10 @@ export class FileAdapter implements LoggerAdapter {
   }
 
   private getCurrentFilePath(): string {
+    if (this.options.rotationFrequency) {
+      return this.getTimeBasedFilePath()
+    }
+    
     if (this.fileIndex === 0) {
       return resolve(this.options.filepath)
     }
@@ -89,6 +137,30 @@ export class FileAdapter implements LoggerAdapter {
       ? filename.split(/\.(?=[^.]+$)/) 
       : [filename, 'log']
     return resolve(dir, `${name}.${this.fileIndex}.${ext}`)
+  }
+
+  private getTimeBasedFilePath(): string {
+    const dir = dirname(this.options.filepath)
+    const filename = this.options.filepath.split('/').pop() ?? 'logone.log'
+    const [name, ext] = filename.includes('.') 
+      ? filename.split(/\.(?=[^.]+$)/) 
+      : [filename, 'log']
+    
+    const timestamp = this.formatTimestamp(new Date())
+    return resolve(dir, `${name}.${timestamp}.${ext}`)
+  }
+
+  private formatTimestamp(date: Date): string {
+    const format = this.options.timestampFormat
+    
+    // シンプルな置換ベースの実装
+    return format
+      .replace('YYYY', date.getFullYear().toString())
+      .replace('MM', (date.getMonth() + 1).toString().padStart(2, '0'))
+      .replace('DD', date.getDate().toString().padStart(2, '0'))
+      .replace('HH', date.getHours().toString().padStart(2, '0'))
+      .replace('mm', date.getMinutes().toString().padStart(2, '0'))
+      .replace('ss', date.getSeconds().toString().padStart(2, '0'))
   }
 
   destroy(): void {

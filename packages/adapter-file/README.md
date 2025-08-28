@@ -5,9 +5,10 @@
 ## 機能
 
 - ファイルへのログ出力
-- ファイルローテーション機能
+- ファイルローテーション機能（サイズベース・時間ベース）
 - カスタマイズ可能な出力フォーマット
 - エンコーディング指定
+- タイムスタンプベースのファイル名生成
 
 ## インストール
 
@@ -36,11 +37,38 @@ logger.info('Hello, world!')
 
 ### ファイルローテーション
 
+#### サイズベースローテーション
+
 ```typescript
 const adapter = createAdapter({
   filepath: './logs/app.log',
   maxFileSize: 10 * 1024 * 1024, // 10MB
   rotateFileCount: 5 // app.log, app.1.log, app.2.log, app.3.log, app.4.log
+})
+```
+
+#### 時間ベースローテーション
+
+```typescript
+// 日次ローテーション
+const dailyAdapter = createAdapter({
+  filepath: './logs/app.log',
+  rotationFrequency: 'daily',
+  timestampFormat: 'YYYY-MM-DD' // app.2024-01-15.log
+})
+
+// 時間単位ローテーション
+const hourlyAdapter = createAdapter({
+  filepath: './logs/app.log',
+  rotationFrequency: 'hourly',
+  timestampFormat: 'YYYY-MM-DD_HH' // app.2024-01-15_14.log
+})
+
+// 分単位ローテーション
+const minutelyAdapter = createAdapter({
+  filepath: './logs/app.log',
+  rotationFrequency: 'minutely',
+  timestampFormat: 'YYYY-MM-DD_HH-mm' // app.2024-01-15_14-30.log
 })
 ```
 
@@ -67,8 +95,12 @@ const adapter = createAdapter({
 | `rotateFileCount` | `number` | `5` | ローテーションするファイル数 |
 | `append` | `boolean` | `true` | ファイルに追記するかどうか |
 | `encoding` | `BufferEncoding` | `'utf-8'` | ファイルエンコーディング |
+| `rotationFrequency` | `'daily' \| 'hourly' \| 'minutely'` | `undefined` | 時間ベースローテーションの頻度 |
+| `timestampFormat` | `string` | `'YYYY-MM-DD'` | タイムスタンプのフォーマット |
 
-## ファイルローテーション
+## ローテーション方式
+
+### サイズベースローテーション
 
 `maxFileSize`を指定すると、ファイルサイズがその値を超えた時に自動的にファイルがローテーションされます。
 
@@ -77,3 +109,22 @@ const adapter = createAdapter({
 - 新しい`app.log`を作成
 
 `rotateFileCount`で保持するファイル数を指定できます。古いファイルは自動的に削除されます。
+
+### 時間ベースローテーション
+
+`rotationFrequency`を指定すると、指定した間隔で新しいファイルが作成されます。
+
+- `daily`: 日次ローテーション（日付が変わると新しいファイル）
+- `hourly`: 時間単位ローテーション（時間が変わると新しいファイル）
+- `minutely`: 分単位ローテーション（分が変わると新しいファイル）
+
+### タイムスタンプフォーマット
+
+時間ベースローテーションで使用できるフォーマット：
+
+- `YYYY`: 年 (4桁)
+- `MM`: 月 (2桁、ゼロ埋め)
+- `DD`: 日 (2桁、ゼロ埋め)
+- `HH`: 時 (2桁、ゼロ埋め、24時間形式)
+- `mm`: 分 (2桁、ゼロ埋め)
+- `ss`: 秒 (2桁、ゼロ埋め)
