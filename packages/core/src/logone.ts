@@ -68,7 +68,7 @@ export class Logone {
             try {
               streamingAdapter.onEntry(entry, this.config)
             } catch (error) {
-              console.error('Error in streaming adapter onEntry:', error)
+              console.error('Error in streaming adapter onEntry:', error instanceof Error ? error.message : 'Unknown error')
             }
           }
         })
@@ -110,7 +110,7 @@ export class Logone {
         try {
           adapter.output(record)
         } catch (error) {
-          console.error('Error in adapter output:', error)
+          console.error('Error in adapter output:', error instanceof Error ? error.message : 'Unknown error')
         }
       })
     }
