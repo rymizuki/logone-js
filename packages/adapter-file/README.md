@@ -1,24 +1,24 @@
 # @logone/adapter-file
 
-ファイルにログを出力するためのLogoneアダプターです。
+A Logone adapter for outputting logs to files with rotation capabilities.
 
-## 機能
+## Features
 
-- ファイルへのログ出力
-- ファイルローテーション機能（サイズベース・時間ベース）
-- カスタマイズ可能な出力フォーマット
-- エンコーディング指定
-- タイムスタンプベースのファイル名生成
+- File log output with JSON format
+- File rotation (size-based and time-based)
+- Customizable output format
+- Multiple encoding support
+- Timestamp-based file naming
 
-## インストール
+## Installation
 
 ```bash
 npm install @logone/adapter-file
 ```
 
-## 使用方法
+## Usage
 
-### 基本的な使用方法
+### Basic Usage
 
 ```typescript
 import { createAdapter } from '@logone/adapter-file'
@@ -35,9 +35,9 @@ const logger = createLogger({
 logger.info('Hello, world!')
 ```
 
-### ファイルローテーション
+### File Rotation
 
-#### サイズベースローテーション
+#### Size-based Rotation
 
 ```typescript
 const adapter = createAdapter({
@@ -47,24 +47,24 @@ const adapter = createAdapter({
 })
 ```
 
-#### 時間ベースローテーション
+#### Time-based Rotation
 
 ```typescript
-// 日次ローテーション
+// Daily rotation
 const dailyAdapter = createAdapter({
   filepath: './logs/app.log',
   rotationFrequency: 'daily',
   timestampFormat: 'YYYY-MM-DD' // app.2024-01-15.log
 })
 
-// 時間単位ローテーション
+// Hourly rotation
 const hourlyAdapter = createAdapter({
   filepath: './logs/app.log',
   rotationFrequency: 'hourly',
   timestampFormat: 'YYYY-MM-DD_HH' // app.2024-01-15_14.log
 })
 
-// 分単位ローテーション
+// Minutely rotation
 const minutelyAdapter = createAdapter({
   filepath: './logs/app.log',
   rotationFrequency: 'minutely',
@@ -72,15 +72,15 @@ const minutelyAdapter = createAdapter({
 })
 ```
 
-### オプション設定
+### Configuration Options
 
 ```typescript
 const adapter = createAdapter({
   filepath: './logs/app.log',
   maxFileSize: 5 * 1024 * 1024, // 5MB
   rotateFileCount: 3,
-  append: true, // ファイルに追記 (デフォルト: true)
-  encoding: 'utf-8' // エンコーディング (デフォルト: 'utf-8')
+  append: true, // Append to file (default: true)
+  encoding: 'utf-8' // File encoding (default: 'utf-8')
 })
 ```
 
@@ -88,43 +88,43 @@ const adapter = createAdapter({
 
 ### FileAdapterOptions
 
-| プロパティ | 型 | デフォルト値 | 説明 |
-|-----------|----|----|------|
-| `filepath` | `string` | - | 出力先ファイルパス (必須) |
-| `maxFileSize` | `number` | `Infinity` | ファイルの最大サイズ (バイト) |
-| `rotateFileCount` | `number` | `5` | ローテーションするファイル数 |
-| `append` | `boolean` | `true` | ファイルに追記するかどうか |
-| `encoding` | `BufferEncoding` | `'utf-8'` | ファイルエンコーディング |
-| `rotationFrequency` | `'daily' \| 'hourly' \| 'minutely'` | `undefined` | 時間ベースローテーションの頻度 |
-| `timestampFormat` | `string` | `'YYYY-MM-DD'` | タイムスタンプのフォーマット |
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `filepath` | `string` | - | Output file path (required) |
+| `maxFileSize` | `number` | `Infinity` | Maximum file size in bytes |
+| `rotateFileCount` | `number` | `5` | Number of rotation files to keep |
+| `append` | `boolean` | `true` | Whether to append to existing file |
+| `encoding` | `BufferEncoding` | `'utf-8'` | File encoding |
+| `rotationFrequency` | `'daily' \| 'hourly' \| 'minutely'` | `undefined` | Time-based rotation frequency |
+| `timestampFormat` | `string` | `'YYYY-MM-DD'` | Timestamp format pattern |
 
-## ローテーション方式
+## Rotation Strategies
 
-### サイズベースローテーション
+### Size-based Rotation
 
-`maxFileSize`を指定すると、ファイルサイズがその値を超えた時に自動的にファイルがローテーションされます。
+When `maxFileSize` is specified, files are automatically rotated when they exceed the specified size.
 
-例：`app.log`が5MBに達した場合
-- `app.log` → `app.1.log`にリネーム
-- 新しい`app.log`を作成
+Example: When `app.log` reaches 5MB:
+- `app.log` → renamed to `app.1.log`
+- New `app.log` is created
 
-`rotateFileCount`で保持するファイル数を指定できます。古いファイルは自動的に削除されます。
+Use `rotateFileCount` to specify the number of files to keep. Older files are automatically deleted.
 
-### 時間ベースローテーション
+### Time-based Rotation
 
-`rotationFrequency`を指定すると、指定した間隔で新しいファイルが作成されます。
+When `rotationFrequency` is specified, new files are created at specified intervals:
 
-- `daily`: 日次ローテーション（日付が変わると新しいファイル）
-- `hourly`: 時間単位ローテーション（時間が変わると新しいファイル）
-- `minutely`: 分単位ローテーション（分が変わると新しいファイル）
+- `daily`: Daily rotation (new file when date changes)
+- `hourly`: Hourly rotation (new file when hour changes)
+- `minutely`: Minutely rotation (new file when minute changes)
 
-### タイムスタンプフォーマット
+### Timestamp Format
 
-時間ベースローテーションで使用できるフォーマット：
+Available format tokens for time-based rotation:
 
-- `YYYY`: 年 (4桁)
-- `MM`: 月 (2桁、ゼロ埋め)
-- `DD`: 日 (2桁、ゼロ埋め)
-- `HH`: 時 (2桁、ゼロ埋め、24時間形式)
-- `mm`: 分 (2桁、ゼロ埋め)
-- `ss`: 秒 (2桁、ゼロ埋め)
+- `YYYY`: Year (4 digits)
+- `MM`: Month (2 digits, zero-padded)
+- `DD`: Day (2 digits, zero-padded)
+- `HH`: Hour (2 digits, zero-padded, 24-hour format)
+- `mm`: Minute (2 digits, zero-padded)
+- `ss`: Second (2 digits, zero-padded)

@@ -1,7 +1,7 @@
 {
   "name": "@logone/adapter-file",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "File adapter for Logone",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -18,7 +18,7 @@
     "adapter"
   ],
   "dependencies": {
-    "@logone/core": "1.1.2"
+    "@logone/core": "1.2.0"
   },
   "devDependencies": {
     "@logone/dev-config": "*",

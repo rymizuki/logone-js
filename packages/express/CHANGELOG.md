@@ -1,5 +1,20 @@
 # @logone/express
 
+## 2.0.0
+
+### Minor Changes
+
+- Synchronize all package versions with minor version bump
+
+  - Update all packages to maintain version consistency across the monorepo
+  - Improve dependency management and version tracking
+  - Establish unified version baseline for future development
+
+### Patch Changes
+
+- Updated dependencies
+  - @logone/core@1.2.0
+
 ## 1.1.2
 
 ### Patch Changes
